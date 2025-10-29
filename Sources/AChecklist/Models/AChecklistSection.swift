@@ -7,7 +7,7 @@ public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
 
     public var status: AChecklistStatus {
         get {
-            let checkedItems: [AChecklistItem] = items.filter { $0.lastChecked != nil }
+            let checkedItems: [AChecklistItem] = items.filter { $0.isChecked }
             if checkedItems.count == items.count {
                 return .checked
             } else if checkedItems.count > 0 {
@@ -20,13 +20,13 @@ public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
             switch newValue {
             case .checked:
                 for index in items.indices {
-                    items[index].lastChecked = Date()
+                    items[index].isChecked = true
                 }
             case .partiallyChecked:
                 () // do nothing
             case .unchecked:
                 for index in items.indices {
-                    items[index].lastChecked = nil
+                    items[index].isChecked = false
                 }   
             }
         }

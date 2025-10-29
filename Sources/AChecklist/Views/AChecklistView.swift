@@ -67,26 +67,27 @@ public struct AChecklistView: View {
         let backgroundColor: Color
         let secondaryColor: Color
     }
+
     @Binding var checklist: AChecklist
     @State private var isViewAppearing = true
 
     public var body: some View {
         ZStack {
             // 根据操作系统选择合适的背景
-                #if os(tvOS)
-                checklistStyle.backgroundColor.ignoresSafeArea()
-                #elseif os(macOS)
-                checklistStyle.backgroundColor.ignoresSafeArea()
-                #elseif os(watchOS)
-                checklistStyle.backgroundColor.ignoresSafeArea()
-                #else
-                // iOS 使用渐变背景
-                LinearGradient(
-                    gradient: Gradient(colors: [checklistStyle.backgroundColor, checklistStyle.secondaryColor]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                ).ignoresSafeArea()
-                #endif
+            #if os(tvOS)
+            checklistStyle.backgroundColor.ignoresSafeArea()
+            #elseif os(macOS)
+            checklistStyle.backgroundColor.ignoresSafeArea()
+            #elseif os(watchOS)
+            checklistStyle.backgroundColor.ignoresSafeArea()
+            #else
+            // iOS 使用渐变背景
+            LinearGradient(
+                gradient: Gradient(colors: [checklistStyle.backgroundColor, checklistStyle.secondaryColor]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
+            #endif
             
             // 主要内容滚动视图
             ScrollView(
@@ -193,7 +194,7 @@ public struct AChecklistView: View {
         }
         .navigationTitle(checklist.name)
         #if os(iOS) || os(tvOS) || os(watchOS)
-        .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.inline)
         #endif
         #if os(macOS)
         .frame(minWidth: 400, minHeight: 400) // macOS 最小窗口尺寸

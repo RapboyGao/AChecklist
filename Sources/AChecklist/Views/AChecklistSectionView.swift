@@ -67,6 +67,7 @@ public struct AChecklistSectionView: View {
         let horizontalSpacing: CGFloat
         let sidebarWidth: CGFloat
     }
+
     @Binding var section: AChecklistSection
 
     public var body: some View {
@@ -83,83 +84,83 @@ public struct AChecklistSectionView: View {
             // 内容区域
             VStack(alignment: .leading, spacing: 0) {
                 // 区域标题栏
-                HStack(alignment: .center, spacing: sectionStyle.horizontalSpacing) {
-                    // 标题和计数 - 设置为可点击以实现全选/取消全选
-                    VStack(alignment: .leading, spacing: 2) {
-                        Button(action: {
-                            // 切换全选/取消全选状态
-                            withAnimation {
-                                switch section.status {
-                                case .checked, .partiallyChecked:
-                                    // 如果全部选中或部分选中，则取消全选
-                                    section.status = .unchecked
-                                case .unchecked:
-                                    // 如果未选中，则全选
-                                    section.status = .checked
+                Button(action: {
+                    // 切换全选/取消全选状态
+                    withAnimation {
+                        switch section.status {
+                        case .checked, .partiallyChecked:
+                            // 如果全部选中或部分选中，则取消全选
+                            section.status = .unchecked
+                        case .unchecked:
+                            // 如果未选中，则全选
+                            section.status = .checked
+                        }
+                    }
+                }) {
+                    HStack(alignment: .center, spacing: sectionStyle.horizontalSpacing) {
+                        // 标题和计数 - 设置为可点击以实现全选/取消全选
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(section.name)
+                                .font(sectionStyle.titleFont)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 2) // 增加点击区域
+                           
+                            // 进度指示器
+                            HStack(spacing: 4) {
+                                Text("\(checkedCount)/\(section.items.count)")
+                                    .font(sectionStyle.subtitleFont)
+                                    .foregroundColor(.secondary)
+                                
+                                // 小型进度条
+                                GeometryReader { geometry in
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.secondary.opacity(0.2))
+                                        .frame(height: 4)
+                                        .overlay(alignment: .leading) {
+                                            RoundedRectangle(cornerRadius: 3)
+                                                .fill(statusColor)
+                                                .frame(
+                                                    width: section.items.isEmpty ? 0 :
+                                                        geometry.size.width * CGFloat(checkedCount) / CGFloat(section.items.count),
+                                                    height: 4
+                                                )
+                                                .animation(.easeInOut(duration: 0.5), value: checkedCount)
+                                        }
+                                }
+                                .frame(height: 4)
+                                .frame(maxWidth: 80)
+                            }
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(sectionStyle.padding)
+                    .background({
+                        #if os(macOS)
+                        return Color(.controlBackgroundColor)
+                        #else
+                        return Color.gray.opacity(0.1)
+                        #endif
+                    }())
+                    .cornerRadius(sectionStyle.cornerRadius)
+                    .padding(.bottom, sectionStyle.verticalSpacing)
+                    #if os(macOS)
+                        .onHover { isHovering in
+                            // macOS hover效果通过修改透明度实现
+                            if isHovering {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    // 这里可以通过状态变量来控制hover效果
                                 }
                             }
-                        }) {        
-                            Text(section.name)
-                            .font(sectionStyle.titleFont)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                                .padding(.vertical, 2) // 增加点击区域
                         }
-                        .buttonStyle(.plain) // 保持文字样式不变
-                        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: section.status)
-                        
-                        // 进度指示器
-                        HStack(spacing: 4) {
-                            Text("\(checkedCount)/\(section.items.count)")
-                                .font(sectionStyle.subtitleFont)
-                                .foregroundColor(.secondary)
-                            
-                            // 小型进度条
-                            GeometryReader { geometry in
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(Color.secondary.opacity(0.2))
-                                    .frame(height: 4)
-                                    .overlay(alignment: .leading) {
-                                        RoundedRectangle(cornerRadius: 3)
-                                            .fill(statusColor)
-                                            .frame(
-                                                width: section.items.isEmpty ? 0 : 
-                                                    geometry.size.width * CGFloat(checkedCount) / CGFloat(section.items.count),
-                                                height: 4
-                                            )
-                                            .animation(.easeInOut(duration: 0.5), value: checkedCount)
-                                    }
-                            }
-                            .frame(height: 4)
-                            .frame(maxWidth: 80)
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .padding(sectionStyle.padding)
-                .background({
-                    #if os(macOS)
-                    return Color(.controlBackgroundColor)
-                    #else
-                    return Color.gray.opacity(0.1)
                     #endif
-                }())
-                .cornerRadius(sectionStyle.cornerRadius)
-                .padding(.bottom, sectionStyle.verticalSpacing)
-                #if os(macOS)
-                .onHover { isHovering in
-                    // macOS hover效果通过修改透明度实现
-                    if isHovering {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            // 这里可以通过状态变量来控制hover效果
-                        }
-                    }
                 }
-                #endif
+                .buttonStyle(.plain) // 保持文字样式不变
+                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: section.status)
                 
                 // 任务列表
-            VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
+                VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
                     ForEach($section.items) { $item in
                         // 直接显示项目内容，不再包含单独的竖条
                         AChecklistItemView(item: $item)

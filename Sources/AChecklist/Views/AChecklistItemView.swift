@@ -47,7 +47,7 @@ public struct AChecklistItemView: View {
         )
         #endif
     }
-    
+
     private struct ItemStyle {
         let cornerRadius: CGFloat
         let padding: CGFloat
@@ -55,10 +55,10 @@ public struct AChecklistItemView: View {
         let detailFont: Font
         let checkboxSize: CGFloat
     }
+
     @Binding var item: AChecklistItem
-    @State private var currentDate = Date()
     @State private var isAnimating = false
-    
+
     // 使用系统自带的相对时间格式化器
     private let relativeFormatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
@@ -66,7 +66,7 @@ public struct AChecklistItemView: View {
         formatter.unitsStyle = .short
         return formatter
     }()
-    
+
     private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect() // 降低刷新频率到每分钟
 
     public var body: some View {
@@ -80,7 +80,6 @@ public struct AChecklistItemView: View {
                     }
                 }
             }
-            currentDate = Date()
         } label: {
             HStack(alignment: .top, spacing: 16) {
                 // 勾选框
@@ -91,10 +90,10 @@ public struct AChecklistItemView: View {
                         .frame(width: itemStyle.checkboxSize, height: itemStyle.checkboxSize)
                     if item.lastChecked != nil {
                         Image(systemName: "checkmark")
-                        .resizable()
-                        .foregroundColor(.green)
-                        .frame(width: itemStyle.checkboxSize / 2, height: itemStyle.checkboxSize / 2)
-                        .scaleEffect(isAnimating ? 1.2 : 1.0)
+                            .resizable()
+                            .foregroundColor(.green)
+                            .frame(width: itemStyle.checkboxSize / 2, height: itemStyle.checkboxSize / 2)
+                            .scaleEffect(isAnimating ? 1.2 : 1.0)
                     }
                 }
                 .animation(.spring(response: 0.3), value: item.lastChecked)
@@ -115,13 +114,13 @@ public struct AChecklistItemView: View {
                         #endif
                         Spacer()
                         if let date = item.lastChecked {
-                            Text(relativeFormatter.localizedString(for: date, relativeTo: currentDate))
+                            Text(relativeFormatter.localizedString(for: date, relativeTo: item.currentDate))
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
                     }
                     if !item.detail.isEmpty {
-                    #if os(macOS)
+                        #if os(macOS)
                         Text(item.detail)
                             .font(itemStyle.detailFont)
                             .foregroundColor(item.lastChecked != nil ? .secondary : .primary)
@@ -134,20 +133,20 @@ public struct AChecklistItemView: View {
                             .lineLimit(2)
                             .opacity(item.lastChecked != nil ? 0.7 : 1.0)
                         #endif
-                }
+                    }
                 }
             }
             .padding(itemStyle.padding)
             .background(
                 RoundedRectangle(cornerRadius: itemStyle.cornerRadius)
-                    .fill({ 
+                    .fill({
                         #if os(macOS)
                         return Color.clear
                         #else
                         return Color.white
                         #endif
                     }())
-                    .shadow(color: { 
+                    .shadow(color: {
                         #if os(macOS)
                         return Color.clear
                         #else
@@ -157,7 +156,7 @@ public struct AChecklistItemView: View {
             )
             #if os(macOS)
             .background(Color(.textBackgroundColor))
-            .onHover { isHovering in
+            .onHover { _ in
                 // macOS hover效果
                 withAnimation(.easeInOut(duration: 0.2)) {
                     // 可以通过状态变量来控制hover效果
@@ -169,7 +168,7 @@ public struct AChecklistItemView: View {
         }
         .buttonStyle(PlainButtonStyle())
         .onReceive(timer) { _ in
-            currentDate = Date()
+            item.currentDate = Date()
         }
     }
 }
