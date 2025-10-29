@@ -4,11 +4,15 @@ import SwiftUI
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistItemView: View {
     @Binding var item: AChecklistItem
-    @State private var date = Date()
+    @State private var currentDate = Date()
+    
+
+    private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     public var body: some View {
         Button {
             item.toggle()
+            currentDate = Date()
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 3)
@@ -18,7 +22,7 @@ public struct AChecklistItemView: View {
                         Text(item.title)
                         Spacer()
                         if let date = item.lastChecked {
-                            Text(SwiftRelativeTime(date, now: .now).description)
+                            Text(SwiftRelativeTime(date, now: currentDate).description)
                         }
                     }
                     if !item.detail.isEmpty {
@@ -27,6 +31,9 @@ public struct AChecklistItemView: View {
                 }
                 .padding()
             }
+        }
+        .onReceive(timer) { _ in
+            currentDate = Date()
         }
     }
 }
