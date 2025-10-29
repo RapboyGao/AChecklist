@@ -139,20 +139,8 @@ public struct AChecklistItemView: View {
             .padding(itemStyle.padding)
             .background(
                 RoundedRectangle(cornerRadius: itemStyle.cornerRadius)
-                    .fill({
-                        #if os(macOS)
-                        return Color.clear
-                        #else
-                        return Color.white
-                        #endif
-                    }())
-                    .shadow(color: {
-                        #if os(macOS)
-                        return Color.clear
-                        #else
-                        return Color.black.opacity(0.05)
-                        #endif
-                    }(), radius: 2, x: 0, y: 1)
+                    .fill(.regularMaterial)
+                    .shadow(radius: 1)
             )
             #if os(macOS)
             .background(Color(.textBackgroundColor))
