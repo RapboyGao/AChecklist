@@ -2,6 +2,59 @@ import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistItemView: View {
+    // 根据不同操作系统提供不同的样式配置
+    private var itemStyle: ItemStyle {
+        #if os(iOS)
+        return ItemStyle(
+            cornerRadius: 12,
+            padding: 16,
+            titleFont: .headline,
+            detailFont: .subheadline,
+            checkboxSize: 24
+        )
+        #elseif os(macOS)
+        return ItemStyle(
+            cornerRadius: 8,
+            padding: 12,
+            titleFont: .system(size: 14, weight: .medium),
+            detailFont: .system(size: 12),
+            checkboxSize: 20
+        )
+        #elseif os(tvOS)
+        return ItemStyle(
+            cornerRadius: 16,
+            padding: 20,
+            titleFont: .system(size: 20, weight: .medium),
+            detailFont: .system(size: 16),
+            checkboxSize: 32
+        )
+        #elseif os(watchOS)
+        return ItemStyle(
+            cornerRadius: 8,
+            padding: 10,
+            titleFont: .body,
+            detailFont: .caption,
+            checkboxSize: 18
+        )
+        #else
+        // 默认样式
+        return ItemStyle(
+            cornerRadius: 10,
+            padding: 14,
+            titleFont: .headline,
+            detailFont: .subheadline,
+            checkboxSize: 22
+        )
+        #endif
+    }
+    
+    private struct ItemStyle {
+        let cornerRadius: CGFloat
+        let padding: CGFloat
+        let titleFont: Font
+        let detailFont: Font
+        let checkboxSize: CGFloat
+    }
     @Binding var item: AChecklistItem
     @State private var currentDate = Date()
     @State private var isAnimating = false
@@ -32,15 +85,16 @@ public struct AChecklistItemView: View {
             HStack(alignment: .top, spacing: 16) {
                 // 勾选框
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: itemStyle.checkboxSize / 3)
                         .strokeBorder(item.lastChecked != nil ? .green : .secondary, lineWidth: 2)
                         .background(item.lastChecked != nil ? .green.opacity(0.1) : .clear)
-                        .frame(width: 24, height: 24)
+                        .frame(width: itemStyle.checkboxSize, height: itemStyle.checkboxSize)
                     if item.lastChecked != nil {
                         Image(systemName: "checkmark")
-                            .foregroundColor(.green)
-                            .font(.system(size: 16, weight: .bold))
-                            .scaleEffect(isAnimating ? 1.2 : 1.0)
+                        .resizable()
+                        .foregroundColor(.green)
+                        .frame(width: itemStyle.checkboxSize / 2, height: itemStyle.checkboxSize / 2)
+                        .scaleEffect(isAnimating ? 1.2 : 1.0)
                     }
                 }
                 .animation(.spring(response: 0.3), value: item.lastChecked)
@@ -48,10 +102,17 @@ public struct AChecklistItemView: View {
                 // 内容区域
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
+                        #if os(macOS)
                         Text(item.title)
-                            .font(.body)
+                            .font(itemStyle.titleFont)
                             .fontWeight(item.lastChecked != nil ? .medium : .regular)
                             .foregroundColor(item.lastChecked != nil ? .secondary : .primary)
+                        #else
+                        Text(item.title)
+                            .font(itemStyle.titleFont)
+                            .fontWeight(item.lastChecked != nil ? .medium : .regular)
+                            .foregroundColor(item.lastChecked != nil ? .secondary : .primary)
+                        #endif
                         Spacer()
                         if let date = item.lastChecked {
                             Text(relativeFormatter.localizedString(for: date, relativeTo: currentDate))
@@ -60,20 +121,49 @@ public struct AChecklistItemView: View {
                         }
                     }
                     if !item.detail.isEmpty {
+                    #if os(macOS)
                         Text(item.detail)
-                            .font(.caption)
+                            .font(itemStyle.detailFont)
+                            .foregroundColor(item.lastChecked != nil ? .secondary : .primary)
+                            .lineLimit(2)
+                            .opacity(item.lastChecked != nil ? 0.7 : 1.0)
+                        #else
+                        Text(item.detail)
+                            .font(itemStyle.detailFont)
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                             .opacity(item.lastChecked != nil ? 0.7 : 1.0)
-                    }
+                        #endif
+                }
                 }
             }
-            .padding(16)
+            .padding(itemStyle.padding)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white)
-                    .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                RoundedRectangle(cornerRadius: itemStyle.cornerRadius)
+                    .fill({ 
+                        #if os(macOS)
+                        return Color.clear
+                        #else
+                        return Color.white
+                        #endif
+                    }())
+                    .shadow(color: { 
+                        #if os(macOS)
+                        return Color.clear
+                        #else
+                        return Color.black.opacity(0.05)
+                        #endif
+                    }(), radius: 2, x: 0, y: 1)
             )
+            #if os(macOS)
+            .background(Color(.textBackgroundColor))
+            .onHover { isHovering in
+                // macOS hover效果
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    // 可以通过状态变量来控制hover效果
+                }
+            }
+            #endif
             .scaleEffect(isAnimating ? 1.02 : 1.0)
             .animation(.spring(response: 0.3), value: isAnimating)
         }

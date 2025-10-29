@@ -2,23 +2,88 @@ import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistSectionView: View {
+    // 根据不同操作系统提供不同的样式配置
+    private var sectionStyle: SectionStyle {
+        #if os(iOS)
+        return SectionStyle(
+            cornerRadius: 12,
+            padding: 16,
+            titleFont: .headline,
+            subtitleFont: .caption2,
+            verticalSpacing: 8,
+            horizontalSpacing: 12,
+            sidebarWidth: 8
+        )
+        #elseif os(macOS)
+        return SectionStyle(
+            cornerRadius: 8,
+            padding: 12,
+            titleFont: .system(size: 15, weight: .semibold),
+            subtitleFont: .system(size: 11),
+            verticalSpacing: 6,
+            horizontalSpacing: 10,
+            sidebarWidth: 6
+        )
+        #elseif os(tvOS)
+        return SectionStyle(
+            cornerRadius: 16,
+            padding: 20,
+            titleFont: .system(size: 24, weight: .bold),
+            subtitleFont: .system(size: 14),
+            verticalSpacing: 12,
+            horizontalSpacing: 16,
+            sidebarWidth: 10
+        )
+        #elseif os(watchOS)
+        return SectionStyle(
+            cornerRadius: 8,
+            padding: 10,
+            titleFont: .headline,
+            subtitleFont: .caption2,
+            verticalSpacing: 5,
+            horizontalSpacing: 8,
+            sidebarWidth: 6
+        )
+        #else
+        // 默认样式
+        return SectionStyle(
+            cornerRadius: 10,
+            padding: 14,
+            titleFont: .headline,
+            subtitleFont: .caption2,
+            verticalSpacing: 8,
+            horizontalSpacing: 12,
+            sidebarWidth: 8
+        )
+        #endif
+    }
+    
+    private struct SectionStyle {
+        let cornerRadius: CGFloat
+        let padding: CGFloat
+        let titleFont: Font
+        let subtitleFont: Font
+        let verticalSpacing: CGFloat
+        let horizontalSpacing: CGFloat
+        let sidebarWidth: CGFloat
+    }
     @Binding var section: AChecklistSection
 
     public var body: some View {
         // 主容器，包含左侧的完整竖条
         HStack(alignment: .top, spacing: 0) {
             // 左侧竖条 - 根据完成程度变色，从标题栏延续到所有任务项
-            RoundedRectangle(cornerRadius: 4)
-                .frame(width: 8)
+            RoundedRectangle(cornerRadius: sectionStyle.sidebarWidth / 2)
+                .frame(width: sectionStyle.sidebarWidth)
                 .foregroundColor(statusColor)
                 .animation(.easeInOut(duration: 0.5), value: checkedCount)
-                .padding(.top, 8) // 与标题栏对齐
-                .padding(.bottom, 16) // 底部留空
+                .padding(.top, sectionStyle.padding / 2) // 与标题栏对齐
+                .padding(.bottom, sectionStyle.padding) // 底部留空
             
             // 内容区域
             VStack(alignment: .leading, spacing: 0) {
                 // 区域标题栏
-                HStack(alignment: .center, spacing: 12) {
+                HStack(alignment: .center, spacing: sectionStyle.horizontalSpacing) {
                     // 标题和计数 - 设置为可点击以实现全选/取消全选
                     VStack(alignment: .leading, spacing: 2) {
                         Button(action: {
@@ -35,9 +100,9 @@ public struct AChecklistSectionView: View {
                             }
                         }) {        
                             Text(section.name)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
+                            .font(sectionStyle.titleFont)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
                                 .padding(.vertical, 2) // 增加点击区域
                         }
                         .buttonStyle(.plain) // 保持文字样式不变
@@ -46,7 +111,7 @@ public struct AChecklistSectionView: View {
                         // 进度指示器
                         HStack(spacing: 4) {
                             Text("\(checkedCount)/\(section.items.count)")
-                                .font(.caption2)
+                                .font(sectionStyle.subtitleFont)
                                 .foregroundColor(.secondary)
                             
                             // 小型进度条
@@ -72,13 +137,29 @@ public struct AChecklistSectionView: View {
                     
                     Spacer()
                 }
-                .padding(16)
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(12)
-                .padding(.bottom, 8)
+                .padding(sectionStyle.padding)
+                .background({
+                    #if os(macOS)
+                    return Color(.controlBackgroundColor)
+                    #else
+                    return Color.gray.opacity(0.1)
+                    #endif
+                }())
+                .cornerRadius(sectionStyle.cornerRadius)
+                .padding(.bottom, sectionStyle.verticalSpacing)
+                #if os(macOS)
+                .onHover { isHovering in
+                    // macOS hover效果通过修改透明度实现
+                    if isHovering {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            // 这里可以通过状态变量来控制hover效果
+                        }
+                    }
+                }
+                #endif
                 
                 // 任务列表
-                VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
                     ForEach($section.items) { $item in
                         // 直接显示项目内容，不再包含单独的竖条
                         AChecklistItemView(item: $item)
@@ -87,7 +168,7 @@ public struct AChecklistSectionView: View {
                 }
                 .padding(.bottom, 16)
             }
-            .padding(.horizontal, 12) // 内容区域内边距
+            .padding(.horizontal, sectionStyle.horizontalSpacing) // 内容区域内边距
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)

@@ -8,7 +8,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     public var name: String
     public var sections: [AChecklistSection]
 
-    init(name: String, sections: [AChecklistSection]) {
+    public init(name: String, sections: [AChecklistSection]) {
         self.id = UUID()
         self.name = name
         self.sections = sections

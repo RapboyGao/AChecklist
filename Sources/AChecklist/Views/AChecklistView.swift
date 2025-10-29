@@ -2,28 +2,101 @@ import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistView: View {
+    // 根据不同操作系统提供不同的样式配置
+    private var checklistStyle: ChecklistStyle {
+        #if os(iOS)
+        return ChecklistStyle(
+            cornerRadius: 16,
+            padding: 16,
+            titleFont: .largeTitle,
+            sectionSpacing: 20,
+            contentPadding: 16,
+            backgroundColor: .white,
+            secondaryColor: Color.gray.opacity(0.1)
+        )
+        #elseif os(macOS)
+        return ChecklistStyle(
+            cornerRadius: 10,
+            padding: 20,
+            titleFont: .system(size: 28, weight: .bold),
+            sectionSpacing: 16,
+            contentPadding: 12,
+            backgroundColor: Color(.windowBackgroundColor),
+            secondaryColor: Color(.controlBackgroundColor)
+        )
+        #elseif os(tvOS)
+        return ChecklistStyle(
+            cornerRadius: 20,
+            padding: 24,
+            titleFont: .system(size: 40, weight: .heavy),
+            sectionSpacing: 28,
+            contentPadding: 20,
+            backgroundColor: .black,
+            secondaryColor: Color.gray.opacity(0.2)
+        )
+        #elseif os(watchOS)
+        return ChecklistStyle(
+            cornerRadius: 10,
+            padding: 12,
+            titleFont: .title,
+            sectionSpacing: 12,
+            contentPadding: 8,
+            backgroundColor: .white,
+            secondaryColor: Color.gray.opacity(0.1)
+        )
+        #else
+        // 默认样式
+        return ChecklistStyle(
+            cornerRadius: 12,
+            padding: 16,
+            titleFont: .largeTitle,
+            sectionSpacing: 16,
+            contentPadding: 12,
+            backgroundColor: .white,
+            secondaryColor: Color.gray.opacity(0.1)
+        )
+        #endif
+    }
+    
+    private struct ChecklistStyle {
+        let cornerRadius: CGFloat
+        let padding: CGFloat
+        let titleFont: Font
+        let sectionSpacing: CGFloat
+        let contentPadding: CGFloat
+        let backgroundColor: Color
+        let secondaryColor: Color
+    }
     @Binding var checklist: AChecklist
     @State private var isViewAppearing = true
 
     public var body: some View {
         ZStack {
-            // 背景色和渐变效果
-            LinearGradient(
-                gradient: Gradient(colors: [.white, .gray.opacity(0.1)]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // 根据操作系统选择合适的背景
+                #if os(tvOS)
+                checklistStyle.backgroundColor.ignoresSafeArea()
+                #elseif os(macOS)
+                checklistStyle.backgroundColor.ignoresSafeArea()
+                #elseif os(watchOS)
+                checklistStyle.backgroundColor.ignoresSafeArea()
+                #else
+                // iOS 使用渐变背景
+                LinearGradient(
+                    gradient: Gradient(colors: [checklistStyle.backgroundColor, checklistStyle.secondaryColor]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ).ignoresSafeArea()
+                #endif
             
             // 主要内容滚动视图
             ScrollView(
                 showsIndicators: false,
                 content: {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
                         // 标题和统计信息
                         VStack(alignment: .leading, spacing: 8) {
                             Text(checklist.name)
-                                .font(.largeTitle)
+                                .font(checklistStyle.titleFont)
                                 .fontWeight(.bold)
                                 .foregroundColor(.primary)
                                 .opacity(isViewAppearing ? 0 : 1)
@@ -99,7 +172,7 @@ public struct AChecklistView: View {
                         }
                         
                         // 区域列表
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
                             ForEach($checklist.sections) { $section in
                                 AChecklistSectionView(section: $section)
                                     .opacity(isViewAppearing ? 0 : 1)
@@ -113,7 +186,7 @@ public struct AChecklistView: View {
                         }
                         
                         // 底部间距
-                        Spacer(minLength: 40)
+                        Spacer(minLength: checklistStyle.padding * 2)
                     }
                 }
             )
@@ -121,6 +194,9 @@ public struct AChecklistView: View {
         .navigationTitle(checklist.name)
         #if os(iOS) || os(tvOS) || os(watchOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
+        #if os(macOS)
+        .frame(minWidth: 400, minHeight: 400) // macOS 最小窗口尺寸
         #endif
         .onAppear {
             // 视图出现时的动画
