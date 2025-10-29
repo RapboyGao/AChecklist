@@ -13,11 +13,16 @@ public struct AChecklistItemView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(.regularMaterial)
-                HStack {
-                    Text(item.title)
-                    Spacer()
-                    if let date = item.lastChecked {
-                        Text(SwiftRelativeTime(date, now: .now).description)
+                VStack {
+                    HStack {
+                        Text(item.title)
+                        Spacer()
+                        if let date = item.lastChecked {
+                            Text(SwiftRelativeTime(date, now: .now).description)
+                        }
+                    }
+                    if !item.detail.isEmpty {
+                        Text(item.detail)
                     }
                 }
                 .padding()
