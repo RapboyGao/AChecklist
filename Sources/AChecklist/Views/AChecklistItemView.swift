@@ -120,7 +120,7 @@ public struct AChecklistItemView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    if !item.detail.isEmpty {
+                    if !item.detailIsEmpty {
                         #if os(macOS)
                         Text(item.detail)
                             .font(itemStyle.detailFont)

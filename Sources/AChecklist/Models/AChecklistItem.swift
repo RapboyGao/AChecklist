@@ -7,6 +7,10 @@ public struct AChecklistItem: Codable, Sendable, Hashable, Identifiable {
     public var currentDate = Date()
     public var lastChecked: Date?
 
+    public var detailIsEmpty: Bool {
+        detail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     public var isChecked: Bool {
         get {
             lastChecked != nil

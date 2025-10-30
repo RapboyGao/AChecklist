@@ -118,7 +118,7 @@ private struct Example: View {
         AChecklistSection(name: "其他", items: [
             AChecklistItem(title: "充电器", detail: "充电后注意查看指示灯"),
             AChecklistItem(title: "电池", detail: "充电后注意查看指示灯"),
-            AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
+            AChecklistItem(title: "手电筒", detail: ""),
         ]),
     ])
 
