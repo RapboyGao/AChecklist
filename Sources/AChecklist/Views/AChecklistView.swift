@@ -80,16 +80,14 @@ public struct AChecklistView: View {
                 // 区域列表
                 VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
                     ForEach($checklist.sections) { $section in
-                        let (_, shouldDisable) = checklist.checkMutualExclusion(for: section)
-                        AChecklistSectionView(section: $section)
-                            .opacity(isViewAppearing ? 0 : (shouldDisable ? 0.7 : 1.0))
+                        AChecklistSectionView(section: $section, checkMutualExclusion: checklist.checkMutualExclusion)
+                            .opacity(isViewAppearing ? 0 : 1.0)
                             .offset(y: isViewAppearing ? 20 : 0)
                             .animation(
                                 .spring(response: 0.5, dampingFraction: 0.7)
                                     .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
                                 value: isViewAppearing
                             )
-                            .disabled(shouldDisable)
                             .onChange(of: section.status) { _ in
                                 // 当section状态改变时，处理互斥逻辑
                                 checklist.handleMutualExclusionSelection(for: section)
