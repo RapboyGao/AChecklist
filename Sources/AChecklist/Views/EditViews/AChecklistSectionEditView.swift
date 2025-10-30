@@ -20,7 +20,7 @@ public struct AChecklistSectionEditView: View {
         .multilineTextAlignment(.trailing)
       }
       Toggle(
-        "Optional",
+        I18n.mutualExclusion,
         isOn: $section.isMutualExclusion)
       //        systemImage: "text.line.magnify"
       ForEach($section.items) { $item in
@@ -28,6 +28,8 @@ public struct AChecklistSectionEditView: View {
       }
       .onDelete(perform: deleteItems)
       .onMove(perform: moveItems)
+    } footer: {
+      Text(I18n.mutualExclusionExplanation)
     }
   }
 
