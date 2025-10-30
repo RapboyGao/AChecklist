@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-public struct AChecklistSectionView: View {
+public struct AChecklistSectionUserView: View {
     @Binding var section: AChecklistSection
     var checkMutualExclusion:
         ((AChecklistSection) -> (hasActiveSection: Bool, shouldDisable: Bool))? =
@@ -131,7 +131,7 @@ public struct AChecklistSectionView: View {
     private var itemsListView: some View {
         VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
             ForEach($section.items) { $item in
-                AChecklistItemView(item: $item)
+                AChecklistItemUserView(item: $item)
                     .animation(
                         .spring(response: 0.3, dampingFraction: 0.8),
                         value: item)
@@ -152,7 +152,7 @@ private struct Example: View {
         ])
 
     var body: some View {
-        AChecklistSectionView(section: $section)
+        AChecklistSectionUserView(section: $section)
             .padding()
     }
 }
@@ -167,7 +167,7 @@ struct AChecklistSectionView_Previews: PreviewProvider {
 // MARK: - Extension for SectionStyle
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-extension AChecklistSectionView {
+extension AChecklistSectionUserView {
     private struct SectionStyle {
         let cornerRadius: CGFloat
         let padding: CGFloat

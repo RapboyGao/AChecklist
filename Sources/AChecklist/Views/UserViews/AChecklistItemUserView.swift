@@ -2,7 +2,7 @@ import SwiftRelativeTime
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-public struct AChecklistItemView: View {
+public struct AChecklistItemUserView: View {
   // 根据不同操作系统提供不同的样式配置
   private var itemStyle: ItemStyle {
     #if os(iOS)
@@ -167,7 +167,7 @@ private struct Example: View {
 
   var body: some View {
     LazyVStack {
-      AChecklistItemView(item: $item)
+      AChecklistItemUserView(item: $item)
     }
     .padding()
   }

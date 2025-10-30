@@ -1,7 +1,7 @@
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-public struct AChecklistView: View {
+public struct AChecklistUserView: View {
   // 根据不同操作系统提供不同的样式配置
   private var checklistStyle: ChecklistStyle {
     #if os(iOS)
@@ -86,7 +86,7 @@ public struct AChecklistView: View {
           // 区域列表
           VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
             ForEach($checklist.sections) { $section in
-              AChecklistSectionView(
+              AChecklistSectionUserView(
                 section: $section, checkMutualExclusion: checklist.checkMutualExclusion
               )
               .id(section.id)
@@ -155,7 +155,7 @@ private struct Example: View {
   @State var checklist: AChecklist = .example
 
   var body: some View {
-    AChecklistView(checklist: $checklist)
+    AChecklistUserView(checklist: $checklist)
   }
 }
 
