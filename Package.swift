@@ -14,8 +14,10 @@ let package = Package(
         ),
     ],
     // https://github.com/RapboyGao/SwiftRelativeTime.git
+        // https://github.com/RapboyGao/SwiftI18n.git
     dependencies: [
         .package(url: "https://github.com/RapboyGao/SwiftRelativeTime.git", from: "1.0.0"),
+        .package(url: "https://github.com/RapboyGao/SwiftI18n.git", branch: "main"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,6 +26,7 @@ let package = Package(
             name: "AChecklist",
             dependencies: [
                 .product(name: "SwiftRelativeTime", package: "SwiftRelativeTime"),
+                .product(name: "SwiftI18n", package: "SwiftI18n"),
             ]
         ),
         .testTarget(
