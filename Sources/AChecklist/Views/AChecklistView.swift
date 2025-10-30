@@ -70,6 +70,67 @@ public struct AChecklistView: View {
 
     @Binding var checklist: AChecklist
     @State private var isViewAppearing = true
+    
+    /// 检查互斥组中是否有已选中的section
+    /// - Parameter section: 当前要检查的section
+    /// - Returns: (是否有已选中的互斥section, 是否应该禁用当前section)
+    private func checkMutualExclusion(for section: AChecklistSection) -> (hasActiveSection: Bool, shouldDisable: Bool) {
+        // 只处理互斥section
+        guard section.isMutualExclusion else {
+            return (false, false)
+        }
+        
+        // 查找当前section所在的互斥组
+        var mutualExclusionGroup = [AChecklistSection]()
+        var inMutualGroup = false
+        
+        for s in checklist.sections {
+            if s.isMutualExclusion {
+                inMutualGroup = true
+                mutualExclusionGroup.append(s)
+                // 如果找到当前section，记录位置但继续收集整个互斥组
+                if s.id == section.id {
+                    continue
+                }
+            } else if inMutualGroup {
+                // 遇到非互斥section，结束当前互斥组的收集
+                break
+            }
+        }
+        
+        // 检查互斥组中是否有非unchecked状态的section
+        let hasActiveSection = mutualExclusionGroup.contains { 
+            $0.id != section.id && $0.status != .unchecked 
+        }
+        
+        return (hasActiveSection, hasActiveSection)
+    }
+    
+    /// 当互斥组中选中一个section时，重置其他section
+    /// - Parameter selectedSection: 被选中的section
+    private func handleMutualExclusionSelection(for selectedSection: AChecklistSection) {
+        guard selectedSection.isMutualExclusion && selectedSection.status != .unchecked else {
+            return
+        }
+        
+        // 查找并处理整个互斥组
+        var isInTargetGroup = false
+        
+        for index in checklist.sections.indices {
+            let currentSection = checklist.sections[index]
+            
+            if currentSection.isMutualExclusion {
+                isInTargetGroup = true
+                // 重置除了当前选中section以外的其他互斥section
+                if currentSection.id != selectedSection.id {
+                    checklist.sections[index].status = .unchecked
+                }
+            } else if isInTargetGroup {
+                // 已经处理完整个互斥组
+                break
+            }
+        }
+    }
 
     public var body: some View {
         // 主要内容滚动视图
@@ -78,14 +139,20 @@ public struct AChecklistView: View {
                 // 区域列表
                 VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
                     ForEach($checklist.sections) { $section in
+                        let (_, shouldDisable) = checkMutualExclusion(for: section)
                         AChecklistSectionView(section: $section)
-                            .opacity(isViewAppearing ? 0 : 1)
+                            .opacity(isViewAppearing ? 0 : (shouldDisable ? 0.7 : 1.0))
                             .offset(y: isViewAppearing ? 20 : 0)
                             .animation(
                                 .spring(response: 0.5, dampingFraction: 0.7)
                                     .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
                                 value: isViewAppearing
                             )
+                            .disabled(shouldDisable)
+                            .onChange(of: section.status) { _ in
+                                // 当section状态改变时，处理互斥逻辑
+                                handleMutualExclusionSelection(for: section)
+                            }
                     }
                 }
             }
@@ -109,18 +176,7 @@ public struct AChecklistView: View {
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 private struct Example: View {
-    @State var checklist = AChecklist(name: "检查单1", sections: [
-        AChecklistSection(name: "任务", items: [
-            AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
-            AChecklistItem(title: "电池", detail: "充电后注意查看指示灯"),
-            AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
-        ]),
-        AChecklistSection(name: "其他", items: [
-            AChecklistItem(title: "充电器", detail: "充电后注意查看指示灯"),
-            AChecklistItem(title: "电池", detail: "充电后注意查看指示灯"),
-            AChecklistItem(title: "手电筒", detail: ""),
-        ]),
-    ])
+    @State var checklist: AChecklist = .example
 
     var body: some View {
         AChecklistView(checklist: $checklist)

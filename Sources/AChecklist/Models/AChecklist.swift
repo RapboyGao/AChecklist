@@ -105,4 +105,97 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         let sealedBox = try? AES.GCM.seal(data, using: key)
         return sealedBox?.combined
     }
+    
+    /// 示例检查单数据
+    /// 包含5个正常组和3个连续的互斥组
+    public static let example = AChecklist(
+        name: "综合检查单示例",
+        sections: [
+            // 正常组1: 准备工作
+            AChecklistSection(
+                name: "准备工作", 
+                items: [
+                    AChecklistItem(title: "检查设备电量", detail: "确保所有设备电量充足"),
+                    AChecklistItem(title: "准备工具包", detail: "包括螺丝刀、万用表等基础工具"),
+                    AChecklistItem(title: "阅读操作手册", detail: "熟悉设备操作流程")
+                ]
+            ),
+            // 正常组2: 系统检查
+            AChecklistSection(
+                name: "系统检查", 
+                items: [
+                    AChecklistItem(title: "启动操作系统", detail: "确认系统正常运行"),
+                    AChecklistItem(title: "检查网络连接", detail: "确保网络稳定可用"),
+                    AChecklistItem(title: "验证账户权限", detail: "确认拥有必要的操作权限")
+                ]
+            ),
+            // 正常组3: 数据备份
+            AChecklistSection(
+                name: "数据备份", 
+                items: [
+                    AChecklistItem(title: "备份关键数据", detail: "确保所有重要数据已备份"),
+                    AChecklistItem(title: "验证备份完整性", detail: "检查备份文件是否可恢复"),
+                    AChecklistItem(title: "记录备份时间", detail: "更新备份日志")
+                ]
+            ),
+            // 互斥组1: 连接方式选择（互斥组）
+            AChecklistSection(
+                name: "有线连接", 
+                items: [
+                    AChecklistItem(title: "连接USB线缆", detail: "使用高速USB 3.0线缆"),
+                    AChecklistItem(title: "安装驱动程序", detail: "确保驱动正确安装"),
+                    AChecklistItem(title: "测试数据传输", detail: "验证连接稳定性")
+                ]
+            )
+            .mutating { $0.isMutualExclusion = true },
+            // 互斥组2: 连接方式选择（互斥组）
+            AChecklistSection(
+                name: "无线连接", 
+                items: [
+                    AChecklistItem(title: "启用Wi-Fi", detail: "连接到指定网络"),
+                    AChecklistItem(title: "配置IP地址", detail: "使用静态或DHCP分配"),
+                    AChecklistItem(title: "测试连接速度", detail: "确保满足性能要求")
+                ]
+            )
+            .mutating { $0.isMutualExclusion = true },
+            // 互斥组3: 连接方式选择（互斥组）
+            AChecklistSection(
+                name: "蓝牙连接", 
+                items: [
+                    AChecklistItem(title: "启用蓝牙", detail: "确保设备蓝牙可见"),
+                    AChecklistItem(title: "配对设备", detail: "完成蓝牙配对过程"),
+                    AChecklistItem(title: "验证连接质量", detail: "检查信号强度和稳定性")
+                ]
+            )
+            .mutating { $0.isMutualExclusion = true },
+            // 正常组4: 配置设置
+            AChecklistSection(
+                name: "配置设置", 
+                items: [
+                    AChecklistItem(title: "设置基本参数", detail: "根据需求调整系统参数"),
+                    AChecklistItem(title: "配置用户偏好", detail: "设置显示、语言等偏好"),
+                    AChecklistItem(title: "保存配置文件", detail: "导出当前配置以备后用")
+                ]
+            ),
+            // 正常组5: 最终测试
+            AChecklistSection(
+                name: "最终测试", 
+                items: [
+                    AChecklistItem(title: "执行功能测试", detail: "验证所有功能正常工作"),
+                    AChecklistItem(title: "检查错误日志", detail: "确认没有异常错误"),
+                    AChecklistItem(title: "完成验收报告", detail: "记录测试结果")
+                ]
+            )
+        ]
+    )
+}
+
+// 扩展用于在创建时直接修改属性
+fileprivate extension AChecklistSection {
+    @discardableResult
+    func mutating(_ mutation: (inout Self) -> Void) -> Self {
+        var mutableSelf = self
+        mutation(&mutableSelf)
+        return mutableSelf
+    }
 }
