@@ -206,7 +206,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             AChecklistSection(
                 name: "系统检查",
                 items: [
-                    AChecklistItem(title: "启动操作系统", detail: "确认系统正常运行"),
+                    AChecklistItem(title: "启动操作系统", detail: "确认系统正常运行", lastChecked: Date(timeIntervalSinceNow: -3600 * 10)),
                     AChecklistItem(title: "检查网络连接", detail: "确保网络稳定可用"),
                     AChecklistItem(title: "验证账户权限", detail: "确认拥有必要的操作权限")
                 ]
