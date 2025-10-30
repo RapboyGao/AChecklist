@@ -5,9 +5,20 @@ public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
     public var id: UUID
     public var name: String
     public var items: [AChecklistItem]
-    
+
     /// 如果前后连续的多个Section该属性为true，则只需其中一个Section完成即可
     public var isMutualExclusion: Bool = false
+
+    public mutating func toggle() {
+        switch status {
+        case .checked:
+            // 如果全部选中或部分选中，则取消全选
+            status = .unchecked
+        case .unchecked, .partiallyChecked:
+            // 如果未选中，则全选
+            status = .checked
+        }
+    }
 
     public var status: AChecklistStatus {
         get {
