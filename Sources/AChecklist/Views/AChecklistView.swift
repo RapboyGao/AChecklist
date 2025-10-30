@@ -12,7 +12,8 @@ public struct AChecklistView: View {
                 sectionSpacing: 20,
                 contentPadding: 16,
                 backgroundColor: .white,
-                secondaryColor: Color.gray.opacity(0.1)
+                secondaryColor: Color.gray.opacity(0.1),
+                sidebarWidth: 8
             )
         #elseif os(macOS)
             return ChecklistStyle(
@@ -22,7 +23,8 @@ public struct AChecklistView: View {
                 sectionSpacing: 16,
                 contentPadding: 12,
                 backgroundColor: Color(.windowBackgroundColor),
-                secondaryColor: Color(.controlBackgroundColor)
+                secondaryColor: Color(.controlBackgroundColor),
+                sidebarWidth: 6
             )
         #elseif os(tvOS)
             return ChecklistStyle(
@@ -32,7 +34,8 @@ public struct AChecklistView: View {
                 sectionSpacing: 28,
                 contentPadding: 20,
                 backgroundColor: .black,
-                secondaryColor: Color.gray.opacity(0.2)
+                secondaryColor: Color.gray.opacity(0.2),
+                sidebarWidth: 10
             )
         #elseif os(watchOS)
             return ChecklistStyle(
@@ -42,7 +45,8 @@ public struct AChecklistView: View {
                 sectionSpacing: 12,
                 contentPadding: 8,
                 backgroundColor: .black,
-                secondaryColor: Color.gray.opacity(0.1)
+                secondaryColor: Color.gray.opacity(0.1),
+                sidebarWidth: 6
             )
         #else
             // 默认样式
@@ -53,7 +57,8 @@ public struct AChecklistView: View {
                 sectionSpacing: 16,
                 contentPadding: 12,
                 backgroundColor: .white,
-                secondaryColor: Color.gray.opacity(0.1)
+                secondaryColor: Color.gray.opacity(0.1),
+                sidebarWidth: 8
             )
         #endif
     }
@@ -66,6 +71,7 @@ public struct AChecklistView: View {
         let contentPadding: CGFloat
         let backgroundColor: Color
         let secondaryColor: Color
+        let sidebarWidth: CGFloat
     }
 
     @Binding var checklist: AChecklist
@@ -74,37 +80,37 @@ public struct AChecklistView: View {
     // 互斥处理逻辑已移至AChecklist模型中
 
     /// 右侧边栏视图
-    private var sidebarView: some View {
-        RoundedRectangle(cornerRadius: 2)
-            .fill(checklist.statusColor)
-            .frame(width: 8)
-            .animation(.easeInOut(duration: 0.5), value: checklist.status)
-    }
+//    private var sidebarView: some View {
+//        RoundedRectangle(cornerRadius: checklistStyle.sidebarWidth / 2)
+//            .fill(checklist.statusColor)
+//            .frame(width: checklistStyle.sidebarWidth)
+//            .animation(.easeInOut(duration: 0.5), value: checklist.status)
+//            .padding(.top, checklistStyle.padding / 2) // 与标题栏对齐
+//            .padding(.bottom, checklistStyle.padding) // 底部留空
+//            .padding(.horizontal, checklistStyle.contentPadding / 2) // 左右内边距，避免紧贴边缘
+//    }
 
     public var body: some View {
         // 主要内容滚动视图
         ScrollView(showsIndicators: true) {
-            HStack {
+            VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
+                // 区域列表
                 VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
-                    // 区域列表
-                    VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
-                        ForEach($checklist.sections) { $section in
-                            AChecklistSectionView(section: $section, checkMutualExclusion: checklist.checkMutualExclusion)
-                                .opacity(isViewAppearing ? 0 : 1.0)
-                                .offset(y: isViewAppearing ? 20 : 0)
-                                .animation(
-                                    .spring(response: 0.5, dampingFraction: 0.7)
-                                        .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
-                                    value: isViewAppearing
-                                )
-                                .onChange(of: section.status) { _ in
-                                    // 当section状态改变时，处理互斥逻辑
-                                    checklist.handleMutualExclusionSelection(for: section)
-                                }
-                        }
+                    ForEach($checklist.sections) { $section in
+                        AChecklistSectionView(section: $section, checkMutualExclusion: checklist.checkMutualExclusion)
+                            .opacity(isViewAppearing ? 0 : 1.0)
+                            .offset(y: isViewAppearing ? 20 : 0)
+                            .animation(
+                                .spring(response: 0.5, dampingFraction: 0.7)
+                                    .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
+                                value: isViewAppearing
+                            )
+                            .onChange(of: section.status) { _ in
+                                // 当section状态改变时，处理互斥逻辑
+                                checklist.handleMutualExclusionSelection(for: section)
+                            }
                     }
                 }
-                sidebarView
             }
         }
         .navigationTitle(checklist.name)
