@@ -15,7 +15,7 @@ public struct AChecklistSectionView: View {
             contentAreaView
         }
         .disabled(shouldDisable)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, sectionStyle.horizontalSpacing)
         .padding(.vertical, 8)
     }
     
@@ -37,7 +37,11 @@ public struct AChecklistSectionView: View {
             sectionHeaderView
             itemsListView
         }
+        #if os(watchOS)
+        .padding(.leading, sectionStyle.horizontalSpacing) // 内容区域内边距
+        #else
         .padding(.horizontal, sectionStyle.horizontalSpacing) // 内容区域内边距
+        #endif
     }
     
     /// 区域标题栏视图

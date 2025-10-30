@@ -76,19 +76,7 @@ public struct AChecklistView: View {
 
     @Binding var checklist: AChecklist
     @State private var isViewAppearing = true
-
-    // 互斥处理逻辑已移至AChecklist模型中
-
-    /// 右侧边栏视图
-//    private var sidebarView: some View {
-//        RoundedRectangle(cornerRadius: checklistStyle.sidebarWidth / 2)
-//            .fill(checklist.statusColor)
-//            .frame(width: checklistStyle.sidebarWidth)
-//            .animation(.easeInOut(duration: 0.5), value: checklist.status)
-//            .padding(.top, checklistStyle.padding / 2) // 与标题栏对齐
-//            .padding(.bottom, checklistStyle.padding) // 底部留空
-//            .padding(.horizontal, checklistStyle.contentPadding / 2) // 左右内边距，避免紧贴边缘
-//    }
+    @State private var rotationAngle: Double = 0
 
     public var body: some View {
         // 主要内容滚动视图
@@ -115,6 +103,11 @@ public struct AChecklistView: View {
                 // 重置按钮 - 只在checklist不为unchecked状态时显示
 
                 Button(action: {
+                    // 添加转动动画
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        rotationAngle += 360
+                    }
+
                     // 重置所有section的状态
                     checklist.resetAllSections()
                 }) {
@@ -124,6 +117,7 @@ public struct AChecklistView: View {
                         .foregroundColor(Color.blue)
                         .opacity(0.7)
                         .padding()
+                        .rotationEffect(.degrees(rotationAngle))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(maxWidth: .infinity, alignment: .center)
