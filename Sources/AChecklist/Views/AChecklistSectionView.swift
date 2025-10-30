@@ -4,12 +4,17 @@ import SwiftUI
 public struct AChecklistSectionView: View {
     @Binding var section: AChecklistSection
     var checkMutualExclusion: ((AChecklistSection) -> (hasActiveSection: Bool, shouldDisable: Bool))? = nil
+    
+    var shouldDisable: Bool {
+        checkMutualExclusion?(section).shouldDisable ?? false
+    }
 
     public var body: some View {
         HStack(alignment: .top, spacing: 0) {
             sidebarView
             contentAreaView
         }
+        .disabled(shouldDisable)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
@@ -38,9 +43,6 @@ public struct AChecklistSectionView: View {
     /// 区域标题栏视图
     /// 包含在 contentAreaView 中
     private var sectionHeaderView: some View {
-        // 计算是否应该禁用当前section
-        let shouldDisable = checkMutualExclusion?(section).shouldDisable ?? false
-        
         return Button {
             withAnimation {
                 section.toggle()
@@ -57,7 +59,6 @@ public struct AChecklistSectionView: View {
         }
         .buttonStyle(.plain) // 保持文字样式不变
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: section.status)
-        .disabled(shouldDisable)
     }
     
     /// 标题内容（包含标题文本和进度指示器）

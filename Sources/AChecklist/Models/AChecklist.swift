@@ -155,6 +155,13 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         return (hasActiveSection, hasActiveSection)
     }
     
+    /// 重置所有section的状态为unchecked
+    public mutating func resetAllSections() {
+        for index in sections.indices {
+            sections[index].status = .unchecked
+        }
+    }
+    
     /// 当互斥组中选中一个section时，重置其他section
     /// - Parameter selectedSection: 被选中的section
     public mutating func handleMutualExclusionSelection(for selectedSection: AChecklistSection) {

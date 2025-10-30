@@ -111,6 +111,24 @@ public struct AChecklistView: View {
                             }
                     }
                 }
+
+                // 重置按钮 - 只在checklist不为unchecked状态时显示
+
+                Button(action: {
+                    // 重置所有section的状态
+                    checklist.resetAllSections()
+                }) {
+                    Image(systemName: "arrow.clockwise.circle")
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(Color.blue)
+                        .opacity(0.7)
+                        .padding()
+                }
+                .buttonStyle(PlainButtonStyle())
+                .frame(maxWidth: .infinity, alignment: .center)
+                .transition(.scale)
+                .disabled(checklist.status == .unchecked)
             }
         }
         .navigationTitle(checklist.name)
