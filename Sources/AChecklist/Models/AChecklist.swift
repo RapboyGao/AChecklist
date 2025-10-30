@@ -1,8 +1,9 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 import CoreTransferable
-import Foundation
 import CryptoKit
+import Foundation
+import SwiftUI
 
 public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     public var id: UUID
@@ -90,6 +91,19 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             }
         }
     }
+    
+    // 计算属性：状态颜色
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    public var statusColor: Color {
+        switch status {
+        case .checked:
+            return Color.green
+        case .partiallyChecked:
+            return Color.orange
+        case .unchecked:
+            return Color.secondary.opacity(0.5)
+        }
+    }
 
     public init(name: String, sections: [AChecklistSection]) {
         self.id = UUID()
@@ -134,8 +148,8 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         }
         
         // 检查互斥组中是否有非unchecked状态的section
-        let hasActiveSection = mutualExclusionGroup.contains { 
-            $0.id != section.id && $0.status != .unchecked 
+        let hasActiveSection = mutualExclusionGroup.contains {
+            $0.id != section.id && $0.status != .unchecked
         }
         
         return (hasActiveSection, hasActiveSection)
@@ -174,7 +188,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         sections: [
             // 正常组1: 准备工作
             AChecklistSection(
-                name: "准备工作", 
+                name: "准备工作",
                 items: [
                     AChecklistItem(title: "检查设备电量", detail: "确保所有设备电量充足"),
                     AChecklistItem(title: "准备工具包", detail: "包括螺丝刀、万用表等基础工具"),
@@ -183,7 +197,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             ),
             // 正常组2: 系统检查
             AChecklistSection(
-                name: "系统检查", 
+                name: "系统检查",
                 items: [
                     AChecklistItem(title: "启动操作系统", detail: "确认系统正常运行"),
                     AChecklistItem(title: "检查网络连接", detail: "确保网络稳定可用"),
@@ -192,7 +206,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             ),
             // 正常组3: 数据备份
             AChecklistSection(
-                name: "数据备份", 
+                name: "数据备份",
                 items: [
                     AChecklistItem(title: "备份关键数据", detail: "确保所有重要数据已备份"),
                     AChecklistItem(title: "验证备份完整性", detail: "检查备份文件是否可恢复"),
@@ -201,7 +215,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             ),
             // 互斥组1: 连接方式选择（互斥组）
             AChecklistSection(
-                name: "有线连接", 
+                name: "有线连接",
                 items: [
                     AChecklistItem(title: "连接USB线缆", detail: "使用高速USB 3.0线缆"),
                     AChecklistItem(title: "安装驱动程序", detail: "确保驱动正确安装"),
@@ -211,7 +225,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             .mutating { $0.isMutualExclusion = true },
             // 互斥组2: 连接方式选择（互斥组）
             AChecklistSection(
-                name: "无线连接", 
+                name: "无线连接",
                 items: [
                     AChecklistItem(title: "启用Wi-Fi", detail: "连接到指定网络"),
                     AChecklistItem(title: "配置IP地址", detail: "使用静态或DHCP分配"),
@@ -221,7 +235,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             .mutating { $0.isMutualExclusion = true },
             // 互斥组3: 连接方式选择（互斥组）
             AChecklistSection(
-                name: "蓝牙连接", 
+                name: "蓝牙连接",
                 items: [
                     AChecklistItem(title: "启用蓝牙", detail: "确保设备蓝牙可见"),
                     AChecklistItem(title: "配对设备", detail: "完成蓝牙配对过程"),
@@ -231,7 +245,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             .mutating { $0.isMutualExclusion = true },
             // 正常组4: 配置设置
             AChecklistSection(
-                name: "配置设置", 
+                name: "配置设置",
                 items: [
                     AChecklistItem(title: "设置基本参数", detail: "根据需求调整系统参数"),
                     AChecklistItem(title: "配置用户偏好", detail: "设置显示、语言等偏好"),
@@ -240,7 +254,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
             ),
             // 正常组5: 最终测试
             AChecklistSection(
-                name: "最终测试", 
+                name: "最终测试",
                 items: [
                     AChecklistItem(title: "执行功能测试", detail: "验证所有功能正常工作"),
                     AChecklistItem(title: "检查错误日志", detail: "确认没有异常错误"),
@@ -252,7 +266,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
 }
 
 // 扩展用于在创建时直接修改属性
-fileprivate extension AChecklistSection {
+private extension AChecklistSection {
     @discardableResult
     func mutating(_ mutation: (inout Self) -> Void) -> Self {
         var mutableSelf = self

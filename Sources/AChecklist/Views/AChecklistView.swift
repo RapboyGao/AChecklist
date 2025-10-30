@@ -70,30 +70,41 @@ public struct AChecklistView: View {
 
     @Binding var checklist: AChecklist
     @State private var isViewAppearing = true
-    
+
     // 互斥处理逻辑已移至AChecklist模型中
+
+    /// 右侧边栏视图
+    private var sidebarView: some View {
+        RoundedRectangle(cornerRadius: 2)
+            .fill(checklist.statusColor)
+            .frame(width: 8)
+            .animation(.easeInOut(duration: 0.5), value: checklist.status)
+    }
 
     public var body: some View {
         // 主要内容滚动视图
         ScrollView(showsIndicators: true) {
-            VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
-                // 区域列表
+            HStack {
                 VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
-                    ForEach($checklist.sections) { $section in
-                        AChecklistSectionView(section: $section, checkMutualExclusion: checklist.checkMutualExclusion)
-                            .opacity(isViewAppearing ? 0 : 1.0)
-                            .offset(y: isViewAppearing ? 20 : 0)
-                            .animation(
-                                .spring(response: 0.5, dampingFraction: 0.7)
-                                    .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
-                                value: isViewAppearing
-                            )
-                            .onChange(of: section.status) { _ in
-                                // 当section状态改变时，处理互斥逻辑
-                                checklist.handleMutualExclusionSelection(for: section)
-                            }
+                    // 区域列表
+                    VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
+                        ForEach($checklist.sections) { $section in
+                            AChecklistSectionView(section: $section, checkMutualExclusion: checklist.checkMutualExclusion)
+                                .opacity(isViewAppearing ? 0 : 1.0)
+                                .offset(y: isViewAppearing ? 20 : 0)
+                                .animation(
+                                    .spring(response: 0.5, dampingFraction: 0.7)
+                                        .delay(0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0) * 0.1),
+                                    value: isViewAppearing
+                                )
+                                .onChange(of: section.status) { _ in
+                                    // 当section状态改变时，处理互斥逻辑
+                                    checklist.handleMutualExclusionSelection(for: section)
+                                }
+                        }
                     }
                 }
+                sidebarView
             }
         }
         .navigationTitle(checklist.name)
