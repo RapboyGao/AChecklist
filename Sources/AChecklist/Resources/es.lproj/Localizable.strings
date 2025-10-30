@@ -1,0 +1,5 @@
+/* AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 */
+"@mutualExclusion" = "Exclusión Mutua";
+
+/* AChecklistSectionEditView 中解释什么是 MutualExclusion 的描述性文字 */
+"@mutualExclusionExplanation" = "Cuando se habilita la Exclusión Mutua, las secciones adyacentes dentro de la misma lista de verificación serán mutuamente excluyentes, permitiendo solo la selección de un grupo.";

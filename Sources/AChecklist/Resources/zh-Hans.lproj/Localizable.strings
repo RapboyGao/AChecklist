@@ -1,0 +1,5 @@
+/* AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 */
+"@mutualExclusion" = "互斥区域";
+
+/* AChecklistSectionEditView 中解释什么是 MutualExclusion 的描述性文字 */
+"@mutualExclusionExplanation" = "启用互斥区域后，同一检查单内相邻区域将互斥，仅允许选择其中一组。";

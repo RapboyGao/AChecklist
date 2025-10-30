@@ -1,0 +1,5 @@
+/* AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 */
+"@mutualExclusion" = "Gegenseitige Ausschließung";
+
+/* AChecklistSectionEditView 中解释什么是 MutualExclusion 的描述性文字 */
+"@mutualExclusionExplanation" = "Wenn die gegenseitige Ausschließung aktiviert ist, sind benachbarte Abschnitte innerhalb derselben Checkliste gegenseitig ausschließend und nur eine Gruppe kann ausgewählt werden.";
