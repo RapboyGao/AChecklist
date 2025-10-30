@@ -5,59 +5,59 @@ public struct AChecklistSectionView: View {
     // 根据不同操作系统提供不同的样式配置
     private var sectionStyle: SectionStyle {
         #if os(iOS)
-        return SectionStyle(
-            cornerRadius: 12,
-            padding: 16,
-            titleFont: .headline,
-            subtitleFont: .caption2,
-            verticalSpacing: 8,
-            horizontalSpacing: 12,
-            sidebarWidth: 8
-        )
+            return SectionStyle(
+                cornerRadius: 12,
+                padding: 16,
+                titleFont: .headline,
+                subtitleFont: .caption2,
+                verticalSpacing: 8,
+                horizontalSpacing: 12,
+                sidebarWidth: 8
+            )
         #elseif os(macOS)
-        return SectionStyle(
-            cornerRadius: 8,
-            padding: 12,
-            titleFont: .system(size: 15, weight: .semibold),
-            subtitleFont: .system(size: 11),
-            verticalSpacing: 6,
-            horizontalSpacing: 10,
-            sidebarWidth: 6
-        )
+            return SectionStyle(
+                cornerRadius: 8,
+                padding: 12,
+                titleFont: .system(size: 15, weight: .semibold),
+                subtitleFont: .system(size: 11),
+                verticalSpacing: 6,
+                horizontalSpacing: 10,
+                sidebarWidth: 6
+            )
         #elseif os(tvOS)
-        return SectionStyle(
-            cornerRadius: 16,
-            padding: 20,
-            titleFont: .system(size: 24, weight: .bold),
-            subtitleFont: .system(size: 14),
-            verticalSpacing: 12,
-            horizontalSpacing: 16,
-            sidebarWidth: 10
-        )
+            return SectionStyle(
+                cornerRadius: 16,
+                padding: 20,
+                titleFont: .system(size: 24, weight: .bold),
+                subtitleFont: .system(size: 14),
+                verticalSpacing: 12,
+                horizontalSpacing: 16,
+                sidebarWidth: 10
+            )
         #elseif os(watchOS)
-        return SectionStyle(
-            cornerRadius: 8,
-            padding: 10,
-            titleFont: .headline,
-            subtitleFont: .caption2,
-            verticalSpacing: 5,
-            horizontalSpacing: 8,
-            sidebarWidth: 6
-        )
+            return SectionStyle(
+                cornerRadius: 8,
+                padding: 10,
+                titleFont: .headline,
+                subtitleFont: .caption2,
+                verticalSpacing: 5,
+                horizontalSpacing: 8,
+                sidebarWidth: 6
+            )
         #else
-        // 默认样式
-        return SectionStyle(
-            cornerRadius: 10,
-            padding: 14,
-            titleFont: .headline,
-            subtitleFont: .caption2,
-            verticalSpacing: 8,
-            horizontalSpacing: 12,
-            sidebarWidth: 8
-        )
+            // 默认样式
+            return SectionStyle(
+                cornerRadius: 10,
+                padding: 14,
+                titleFont: .headline,
+                subtitleFont: .caption2,
+                verticalSpacing: 8,
+                horizontalSpacing: 12,
+                sidebarWidth: 8
+            )
         #endif
     }
-    
+
     private struct SectionStyle {
         let cornerRadius: CGFloat
         let padding: CGFloat
@@ -76,11 +76,11 @@ public struct AChecklistSectionView: View {
             // 左侧竖条 - 根据完成程度变色，从标题栏延续到所有任务项
             RoundedRectangle(cornerRadius: sectionStyle.sidebarWidth / 2)
                 .frame(width: sectionStyle.sidebarWidth)
-                .foregroundColor(statusColor)
-                .animation(.easeInOut(duration: 0.5), value: checkedCount)
+                .foregroundColor(section.statusColor)
+                .animation(.easeInOut(duration: 0.5), value: section.checkedCount)
                 .padding(.top, sectionStyle.padding / 2) // 与标题栏对齐
                 .padding(.bottom, sectionStyle.padding) // 底部留空
-            
+
             // 内容区域
             VStack(alignment: .leading, spacing: 0) {
                 // 区域标题栏
@@ -88,10 +88,10 @@ public struct AChecklistSectionView: View {
                     // 切换全选/取消全选状态
                     withAnimation {
                         switch section.status {
-                        case .checked, .partiallyChecked:
+                        case .checked:
                             // 如果全部选中或部分选中，则取消全选
                             section.status = .unchecked
-                        case .unchecked:
+                        case .unchecked, .partiallyChecked:
                             // 如果未选中，则全选
                             section.status = .checked
                         }
@@ -105,13 +105,13 @@ public struct AChecklistSectionView: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
                                 .padding(.vertical, 2) // 增加点击区域
-                           
+
                             // 进度指示器
-                            HStack(spacing: 4) {
-                                Text("\(checkedCount)/\(section.items.count)")
+                            HStack(spacing: 10) {
+                                Text(section.checkedVsTotal)
                                     .font(sectionStyle.subtitleFont)
                                     .foregroundColor(.secondary)
-                                
+
                                 // 小型进度条
                                 GeometryReader { geometry in
                                     RoundedRectangle(cornerRadius: 3)
@@ -119,30 +119,23 @@ public struct AChecklistSectionView: View {
                                         .frame(height: 4)
                                         .overlay(alignment: .leading) {
                                             RoundedRectangle(cornerRadius: 3)
-                                                .fill(statusColor)
+                                                .fill(section.statusColor)
                                                 .frame(
                                                     width: section.items.isEmpty ? 0 :
-                                                        geometry.size.width * CGFloat(checkedCount) / CGFloat(section.items.count),
+                                                        geometry.size.width * section.checkRatio,
                                                     height: 4
                                                 )
-                                                .animation(.easeInOut(duration: 0.5), value: checkedCount)
+                                                .animation(.easeInOut(duration: 0.5), value: section.checkedCount)
                                         }
                                 }
                                 .frame(height: 4)
-                                .frame(maxWidth: 80)
                             }
                         }
-                        
+
                         Spacer()
                     }
                     .padding(sectionStyle.padding)
-                    .background({
-                        #if os(macOS)
-                        return Color(.controlBackgroundColor)
-                        #else
-                        return Color.gray.opacity(0.1)
-                        #endif
-                    }())
+                    .background(.thickMaterial)
                     .cornerRadius(sectionStyle.cornerRadius)
                     .padding(.bottom, sectionStyle.verticalSpacing)
                     #if os(macOS)
@@ -158,7 +151,7 @@ public struct AChecklistSectionView: View {
                 }
                 .buttonStyle(.plain) // 保持文字样式不变
                 .animation(.spring(response: 0.3, dampingFraction: 0.8), value: section.status)
-                
+
                 // 任务列表
                 VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
                     ForEach($section.items) { $item in
@@ -173,23 +166,6 @@ public struct AChecklistSectionView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-    }
-    
-    // 计算属性：已完成的任务数量
-    private var checkedCount: Int {
-        section.items.filter { $0.lastChecked != nil }.count
-    }
-    
-    // 计算属性：状态颜色
-    private var statusColor: Color {
-        switch section.status {
-        case .checked:
-            return .green
-        case .partiallyChecked:
-            return .orange
-        case .unchecked:
-            return .secondary.opacity(0.5)
-        }
     }
 }
 

@@ -13,8 +13,8 @@ public struct AChecklistItem: Codable, Sendable, Hashable, Identifiable {
         }
         set {
             if newValue {
+                currentDate = Date(timeIntervalSinceNow: 1)
                 lastChecked = Date()
-                currentDate = Date()
             } else {
                 lastChecked = nil
             }
@@ -22,7 +22,8 @@ public struct AChecklistItem: Codable, Sendable, Hashable, Identifiable {
     }
 
     public mutating func toggle() {
-        currentDate = Date()
+        currentDate = Date(timeIntervalSinceNow: 1)
+
         guard lastChecked == nil else {
             lastChecked = nil
             return

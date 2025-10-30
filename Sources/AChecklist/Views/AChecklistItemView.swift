@@ -1,3 +1,4 @@
+import SwiftRelativeTime
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
@@ -67,7 +68,7 @@ public struct AChecklistItemView: View {
         return formatter
     }()
 
-    private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect() // 降低刷新频率到每分钟
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // 降低刷新频率到每分钟
 
     public var body: some View {
         Button {
@@ -114,7 +115,7 @@ public struct AChecklistItemView: View {
                         #endif
                         Spacer()
                         if let date = item.lastChecked {
-                            Text(relativeFormatter.localizedString(for: date, relativeTo: item.currentDate))
+                            Text("\(SwiftRelativeTime(date, now: item.currentDate))")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -143,7 +144,6 @@ public struct AChecklistItemView: View {
                     .shadow(radius: 1)
             )
             #if os(macOS)
-            .background(Color(.textBackgroundColor))
             .onHover { _ in
                 // macOS hover效果
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -154,7 +154,7 @@ public struct AChecklistItemView: View {
             .scaleEffect(isAnimating ? 1.02 : 1.0)
             .animation(.spring(response: 0.3), value: isAnimating)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .onReceive(timer) { _ in
             item.currentDate = Date()
         }
