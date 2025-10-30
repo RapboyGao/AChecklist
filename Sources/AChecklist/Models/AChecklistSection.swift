@@ -5,6 +5,9 @@ public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
     public var id: UUID
     public var name: String
     public var items: [AChecklistItem]
+    
+    /// 如果前后连续的多个Section该属性为true，则只需其中一个Section完成即可
+    public var isMutualExclusion: Bool = false
 
     public var status: AChecklistStatus {
         get {
