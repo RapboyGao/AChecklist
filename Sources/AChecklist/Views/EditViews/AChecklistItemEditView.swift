@@ -72,17 +72,19 @@ public struct AChecklistItemEditView: View {
     }
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 private struct Example: View {
     @State var item = AChecklistItem(title: "任务", detail: "充电后注意查看指示灯")
     var body: some View {
-        List {
-            AChecklistItemEditView(item: $item)
+        NavigationStack {
+            List {
+                AChecklistItemEditView(item: $item)
+            }
         }
     }
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 struct AChecklistItemEditView_Previews: PreviewProvider {
     static var previews: some View {
         Example()
