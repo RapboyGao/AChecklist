@@ -4,6 +4,7 @@ public struct AChecklistItem: Codable, Sendable, Hashable, Identifiable {
   public var id: UUID
   public var title: String
   public var detail: String
+    
   public var currentDate = Date()
   public var lastChecked: Date?
   public var expiresAfter: DateComponents = DateComponents(hour: 6)

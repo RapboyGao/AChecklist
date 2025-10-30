@@ -3,8 +3,10 @@ import SwiftUI
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistSectionView: View {
     @Binding var section: AChecklistSection
-    var checkMutualExclusion: ((AChecklistSection) -> (hasActiveSection: Bool, shouldDisable: Bool))? = nil
-    
+    var checkMutualExclusion:
+        ((AChecklistSection) -> (hasActiveSection: Bool, shouldDisable: Bool))? =
+            nil
+
     var shouldDisable: Bool {
         checkMutualExclusion?(section).shouldDisable ?? false
     }
@@ -18,7 +20,7 @@ public struct AChecklistSectionView: View {
         .padding(.horizontal, sectionStyle.horizontalSpacing)
         .padding(.vertical, 8)
     }
-    
+
     /// 侧边栏视图
     /// 包含在 body 中
     private var sidebarView: some View {
@@ -26,10 +28,10 @@ public struct AChecklistSectionView: View {
             .frame(width: sectionStyle.sidebarWidth)
             .foregroundColor(section.statusColor)
             .animation(.easeInOut(duration: 0.5), value: section.checkedCount)
-            .padding(.top, sectionStyle.padding / 2) // 与标题栏对齐
-            .padding(.bottom, sectionStyle.padding) // 底部留空
+            .padding(.top, sectionStyle.padding / 2)  // 与标题栏对齐
+            .padding(.bottom, sectionStyle.padding)  // 底部留空
     }
-    
+
     /// 内容区域视图
     /// 包含在 body 中
     private var contentAreaView: some View {
@@ -38,12 +40,12 @@ public struct AChecklistSectionView: View {
             itemsListView
         }
         #if os(watchOS)
-        .padding(.leading, sectionStyle.horizontalSpacing) // 内容区域内边距
+            .padding(.leading, sectionStyle.horizontalSpacing)  // 内容区域内边距
         #else
-        .padding(.horizontal, sectionStyle.horizontalSpacing) // 内容区域内边距
+            .padding(.horizontal, sectionStyle.horizontalSpacing)  // 内容区域内边距
         #endif
     }
-    
+
     /// 区域标题栏视图
     /// 包含在 contentAreaView 中
     private var sectionHeaderView: some View {
@@ -52,7 +54,8 @@ public struct AChecklistSectionView: View {
                 section.toggle()
             }
         } label: {
-            HStack(alignment: .center, spacing: sectionStyle.horizontalSpacing) {
+            HStack(alignment: .center, spacing: sectionStyle.horizontalSpacing)
+            {
                 headerContent
                 Spacer()
             }
@@ -61,10 +64,11 @@ public struct AChecklistSectionView: View {
             .cornerRadius(sectionStyle.cornerRadius)
             .padding(.bottom, sectionStyle.verticalSpacing)
         }
-        .buttonStyle(.plain) // 保持文字样式不变
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: section.status)
+        .buttonStyle(.plain)  // 保持文字样式不变
+        .animation(
+            .spring(response: 0.3, dampingFraction: 0.8), value: section.status)
     }
-    
+
     /// 标题内容（包含标题文本和进度指示器）
     /// 包含在 sectionHeaderView 中
     private var headerContent: some View {
@@ -73,17 +77,21 @@ public struct AChecklistSectionView: View {
             progressIndicator
         }
     }
-    
+
     /// 区域标题文本
     /// 包含在 headerContent > sectionHeaderView 中
     private var sectionTitle: some View {
-        Text(section.name)
-            .font(sectionStyle.titleFont)
-            .fontWeight(.semibold)
-            .foregroundColor(.primary)
-            .padding(.vertical, 2) // 增加点击区域
+        HStack {
+            Text(section.name)
+                .font(sectionStyle.titleFont)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+                .padding(.vertical, 2)  // 增加点击区域
+            Spacer()
+        }
+
     }
-    
+
     /// 横向进度指示器
     /// 包含在 contentAreaView 中
     private var progressIndicator: some View {
@@ -94,7 +102,7 @@ public struct AChecklistSectionView: View {
             progressBarView
         }
     }
-    
+
     /// 横向进度条视图
     /// 包含在 progressIndicator > 中
     private var progressBarView: some View {
@@ -106,23 +114,27 @@ public struct AChecklistSectionView: View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(section.statusColor)
                         .frame(
-                            width: section.items.isEmpty ? 0 :
-                                geometry.size.width * section.checkRatio,
+                            width: section.items.isEmpty
+                                ? 0 : geometry.size.width * section.checkRatio,
                             height: 4
                         )
-                        .animation(.easeInOut(duration: 0.5), value: section.checkedCount)
+                        .animation(
+                            .easeInOut(duration: 0.5),
+                            value: section.checkedCount)
                 }
         }
         .frame(height: 4)
     }
-    
+
     /// 任务列表视图
     /// 包含在 contentAreaView 中
     private var itemsListView: some View {
         VStack(alignment: .leading, spacing: sectionStyle.verticalSpacing + 2) {
             ForEach($section.items) { $item in
                 AChecklistItemView(item: $item)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: item)
+                    .animation(
+                        .spring(response: 0.3, dampingFraction: 0.8),
+                        value: item)
             }
         }
         .padding(.bottom, 16)
@@ -131,11 +143,13 @@ public struct AChecklistSectionView: View {
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 private struct Example: View {
-    @State var section = AChecklistSection(name: "任务", items: [
-        AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
-        AChecklistItem(title: "电池", detail: "充电后注意查看指示灯"),
-        AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
-    ])
+    @State var section = AChecklistSection(
+        name: "任务",
+        items: [
+            AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
+            AChecklistItem(title: "电池", detail: "充电后注意查看指示灯"),
+            AChecklistItem(title: "手电筒", detail: "充电后注意查看指示灯"),
+        ])
 
     var body: some View {
         AChecklistSectionView(section: $section)
@@ -163,7 +177,7 @@ extension AChecklistSectionView {
         let horizontalSpacing: CGFloat
         let sidebarWidth: CGFloat
     }
-    
+
     // 根据不同操作系统提供不同的样式配置
     private var sectionStyle: SectionStyle {
         #if os(iOS)
