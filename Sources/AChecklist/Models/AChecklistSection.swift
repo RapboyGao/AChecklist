@@ -7,6 +7,7 @@ public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
     public var items: [AChecklistItem]
 
     /// 如果前后连续的多个Section该属性为true，则只需其中一个Section完成即可
+    /// 相邻互斥 Section
     public var isMutualExclusion: Bool = false
 
     public mutating func toggle() {
