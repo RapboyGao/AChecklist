@@ -1,5 +1,59 @@
 /* AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 */
 "@mutualExclusion" = "Gegenseitige Ausschließung";
 
+/* AChecklistItemEditView 的标题 */
+"@checklistItem" = "Checklisteintrag";
+
+/* AChecklistItemEditView 中默认的详情文字 */
+"@checklistItemDetail" = "Details";
+
+/* AChecklistSectionEditView 中确认删除分区的确认对话框文字 */
+"@confirmDeleteSection" = "Möchten Sie diesen Abschnitt wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.";
+
 /* AChecklistSectionEditView 中解释什么是 MutualExclusion 的描述性文字 */
 "@mutualExclusionExplanation" = "Wenn die gegenseitige Ausschließung aktiviert ist, sind benachbarte Abschnitte innerhalb derselben Checkliste gegenseitig ausschließend und nur eine Gruppe kann ausgewählt werden.";
+
+/* AChecklistItemEditView 中设置秒数的标签文字(单数形式) */
+"@second" = "Sekunde";
+
+/* AChecklistItemEditView 中设置秒数的标签文字(复数形式) */
+"@seconds" = "Sekunden";
+
+/* AChecklistItemEditView 中设置分钟数的标签文字(单数形式) */
+"@minute" = "Minute";
+
+/* AChecklistItemEditView 中设置过期时间的Section标题 */
+"@expiresAfter" = "Läuft ab nach";
+
+/* AChecklistItemEditView 中设置分钟数的标签文字(复数形式) */
+"@minutes" = "Minuten";
+
+/* AChecklistItemEditView 中设置小时数的标签文字(单数形式) */
+"@hour" = "Stunde";
+
+/* AChecklistItemEditView 中设置小时数的标签文字(复数形式) */
+"@hours" = "Stunden";
+
+/* AChecklistItemEditView 中设置天数的标签文字(单数形式) */
+"@day" = "Tag";
+
+/* AChecklistItemEditView 中设置天数的标签文字(复数形式) */
+"@days" = "Tage";
+
+/* AChecklistItemEditView 中设置周数的标签文字(单数形式) */
+"@week" = "Woche";
+
+/* AChecklistItemEditView 中设置周数的标签文字(复数形式) */
+"@weeks" = "Wochen";
+
+/* AChecklistItemEditView 中设置月数的标签文字(单数形式) */
+"@month" = "Monat";
+
+/* AChecklistItemEditView 中设置月数的标签文字(复数形式) */
+"@months" = "Monate";
+
+/* AChecklistItemEditView 中设置年数的标签文字(单数形式) */
+"@year" = "Jahr";
+
+/* AChecklistItemEditView 中设置年数的标签文字(复数形式) */
+"@years" = "Jahre";
