@@ -8,8 +8,35 @@ public struct AChecklistSectionEditView: View {
 
     @State private var isDeleteConfirmPresented = false
 
-    public var body: some View {
-        Section {
+    @ViewBuilder
+    private var mutualExclusion: some View {
+        #if os(watchOS)
+            Toggle(
+                I18n.mutualExclusion,
+                isOn: $section.isMutualExclusion
+            )
+        #else
+            HStack {
+                Text(
+                    I18n.mutualExclusion
+                )
+                Toggle(
+                    I18n.mutualExclusion,
+                    isOn: $section.isMutualExclusion
+                )
+            }
+        #endif
+    }
+
+    @ViewBuilder
+    private var titleEditor: some View {
+        #if os(watchOS)
+            TextField(
+                SwiftI18n.name.description,
+                text: $section.name
+            )
+            .font(.title2)
+        #else
             HStack {
                 Image(
                     systemName: SwiftI18n.part
@@ -22,9 +49,15 @@ public struct AChecklistSectionEditView: View {
                 )
                 .multilineTextAlignment(.trailing)
             }
-            Toggle(
-                I18n.mutualExclusion,
-                isOn: $section.isMutualExclusion)
+
+        #endif
+
+    }
+
+    public var body: some View {
+        Section {
+            titleEditor
+            mutualExclusion
             ForEach($section.items) { $item in
                 AChecklistItemEditView(item: $item)
             }

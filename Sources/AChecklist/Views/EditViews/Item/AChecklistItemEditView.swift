@@ -5,20 +5,23 @@ import SwiftUI
 public struct AChecklistItemEditView: View {
     @Binding var item: AChecklistItem
     @State private var isShown = false
+    #if !os(watchOS)
+        @ViewBuilder
+        var listContent: some View {
 
-    @ViewBuilder
-    var listContent: some View {
-        AChecklistItemEditContent($item)
-            #if !os(macOS)
-                .toolbar {
-                    ToolbarItemGroup {
-                        Button(SwiftI18n.done.description) {
-                            isShown.toggle()
+            AChecklistItemEditContent($item)
+                #if !os(macOS)
+                    .toolbar {
+                        ToolbarItemGroup {
+                            Button(SwiftI18n.done.description) {
+                                isShown.toggle()
+                            }
                         }
                     }
-                }
-            #endif
-    }
+                #endif
+
+        }
+    #endif
 
     public var body: some View {
         #if os(watchOS)
@@ -36,27 +39,26 @@ public struct AChecklistItemEditView: View {
             .sheet(isPresented: $isShown) {
                 if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
                     NavigationStack {
-                        AChecklistItemEditContent($item)
+                        listContent
                     }
 
                 } else {
                     NavigationView {
-                        AChecklistItemEditContent($item)
-                        AChecklistItemEditContent($item)
+                        listContent
+                        listContent
                     }
                 }
             }
-
         #endif
 
     }
 }
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 private struct Example: View {
     @State var item = AChecklistItem(title: "任务", detail: "充电后注意查看指示灯")
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 AChecklistItemEditView(item: $item)
             }
@@ -64,7 +66,7 @@ private struct Example: View {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 struct AChecklistItemEditView_Previews: PreviewProvider {
     static var previews: some View {
         Example()
