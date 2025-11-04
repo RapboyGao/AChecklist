@@ -2,81 +2,93 @@ import Foundation
 import SwiftUI
 
 public struct AChecklistSection: Codable, Sendable, Hashable, Identifiable {
-    public var id: UUID
-    public var name: String
-    public var items: [AChecklistItem]
+  public var id: UUID
+  public var name: String
+  public var items: [AChecklistItem]
 
-    /// 如果前后连续的多个Section该属性为true，则只需其中一个Section完成即可
-    /// 相邻互斥 Section
-    public var isMutualExclusion: Bool = false
+  /// 如果前后连续的多个Section该属性为true，则只需其中一个Section完成即可
+  /// 相邻互斥 Section
+  public var isMutualExclusion: Bool = false
 
-    public mutating func toggle() {
-        switch status {
-        case .checked:
-            // 如果全部选中或部分选中，则取消全选
-            status = .unchecked
-        case .unchecked, .partiallyChecked:
-            // 如果未选中，则全选
-            status = .checked
+  public mutating func toggle() {
+    switch status {
+    case .checked:
+      // 如果全部选中或部分选中，则取消全选
+      status = .unchecked
+    case .unchecked, .partiallyChecked:
+      // 如果未选中，则全选
+      status = .checked
+    }
+  }
+
+  public var status: AChecklistStatus {
+    get {
+      let checkedItems: [AChecklistItem] = items.filter { $0.isChecked }
+      if checkedItems.count == items.count {
+        return .checked
+      } else if checkedItems.count > 0 {
+        return .partiallyChecked
+      } else {
+        return .unchecked
+      }
+    }
+    set {
+      switch newValue {
+      case .checked:
+        for index in items.indices {
+          items[index].isChecked = true
         }
-    }
-
-    public var status: AChecklistStatus {
-        get {
-            let checkedItems: [AChecklistItem] = items.filter { $0.isChecked }
-            if checkedItems.count == items.count {
-                return .checked
-            } else if checkedItems.count > 0 {
-                return .partiallyChecked
-            } else {
-                return .unchecked
-            }
+      case .partiallyChecked:
+        ()  // do nothing
+      case .unchecked:
+        for index in items.indices {
+          items[index].isChecked = false
         }
-        set {
-            switch newValue {
-            case .checked:
-                for index in items.indices {
-                    items[index].isChecked = true
-                }
-            case .partiallyChecked:
-                () // do nothing
-            case .unchecked:
-                for index in items.indices {
-                    items[index].isChecked = false
-                }
-            }
-        }
+      }
     }
+  }
 
-    // 计算属性：状态颜色
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-    public var statusColor: Color {
-        switch status {
-        case .checked:
-            return Color.green
-        case .partiallyChecked:
-            return Color.orange
-        case .unchecked:
-            return Color.secondary.opacity(0.5)
-        }
+  // 计算属性：状态颜色
+  @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+  public var statusColor: Color {
+    switch status {
+    case .checked:
+      return Color.green
+    case .partiallyChecked:
+      return Color.orange
+    case .unchecked:
+      return Color.secondary.opacity(0.5)
     }
+  }
 
-    // 计算属性：已完成的任务数量
-    public var checkedCount: Int {
-        items.filter { $0.lastChecked != nil }.count
-    }
+  // 计算属性：已完成的任务数量
+  public var checkedCount: Int {
+    items.filter { $0.lastChecked != nil }.count
+  }
 
-    public var checkedVsTotal: String {
-        "\(checkedCount)/\(items.count)"
-    }
+  public var checkedVsTotal: String {
+    "\(checkedCount)/\(items.count)"
+  }
 
-    public var checkRatio: Double {
-        Double(checkedCount) / Double(items.count)
-    }
+  public var checkRatio: Double {
+    Double(checkedCount) / Double(items.count)
+  }
 
-    public init(name: String, items: [AChecklistItem]) {
-        self.id = UUID()
-        self.name = name
-        self.items = items
-    }
+  static func createRandom() -> Self {
+    // 最后5个字母
+    let randomName = "Section-\(UUID().uuidString.suffix(5))"
+    return Self(
+      name: randomName,
+      items: [
+        .createRandom(),
+        .createRandom(),
+        .createRandom(),
+      ])
+  }
+
+  public init(name: String, items: [AChecklistItem]) {
+    self.id = UUID()
+    self.name = name
+    self.items = items
+  }
 }

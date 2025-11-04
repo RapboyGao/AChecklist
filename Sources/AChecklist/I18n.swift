@@ -12,6 +12,10 @@ enum I18n {
   public static let checklistItemDetail = NSLocalizedString(
     "@checklistItemDetail",
     bundle: .module, comment: "AChecklistItemEditView 中默认的详情文字")
+  //
+  public static let confirmDeleteSection = NSLocalizedString(
+    "@confirmDeleteSection",
+    bundle: .module, comment: "AChecklistSectionEditView 中确认删除分区的确认对话框文字 \"确定要删除这部分吗？此操作无法撤销。\"")
 
   /// 启用 MutualExclusion 后，同一 Checklist 内相邻 Section 将互斥，仅允许选择其中一组
   public static let mutualExclusionExplanation = NSLocalizedString(

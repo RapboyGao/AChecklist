@@ -6,6 +6,8 @@ public struct AChecklistSectionEditView: View {
     @Binding var section: AChecklistSection
     var onDelete: (UUID) -> Void
 
+    @State private var isDeleteConfirmPresented = false
+
     public var body: some View {
         Section {
             HStack {
@@ -32,13 +34,27 @@ public struct AChecklistSectionEditView: View {
                 section.items.append(newItem)
             }
             Button(role: .destructive) {
-                onDelete(section.id)
+                isDeleteConfirmPresented = true
             } label: {
                 Label(
                     SwiftI18n.delete.description,
                     systemImage: SwiftI18n.delete.defaultSystemImage
                 )
                 .foregroundColor(.red)
+            }
+            .confirmationDialog(
+                SwiftI18n.confirm.description,
+                isPresented: $isDeleteConfirmPresented,
+                titleVisibility: .visible
+            ) {
+                Button(SwiftI18n.delete.description, role: .destructive) {
+                    onDelete(section.id)
+                }
+                Button(SwiftI18n.cancel.description, role: .cancel) {
+                    isDeleteConfirmPresented = false
+                }
+            } message: {
+                Text(I18n.confirmDeleteSection)
             }
         } footer: {
             Text(I18n.mutualExclusionExplanation)
