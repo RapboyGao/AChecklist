@@ -44,6 +44,12 @@ public struct AChecklistItem: Codable, Sendable, Hashable, Identifiable {
     lastChecked = Date()
   }
 
+  public static func createRandom() -> Self {
+    // 取最前面5位
+    let id: Substring = UUID().uuidString.prefix(5)
+    return AChecklistItem(title: "Item-\(id)", detail: "Detail", lastChecked: nil)
+  }
+
   public init(title: String, detail: String = "", lastChecked: Date? = nil) {
     self.id = UUID()
     self.title = title

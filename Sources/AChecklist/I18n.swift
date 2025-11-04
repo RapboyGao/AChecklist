@@ -9,6 +9,10 @@ enum I18n {
     "@checklistItem",
     bundle: .module, comment: "AChecklistItemEditView 的标题")
 
+  public static let checklistItemDetail = NSLocalizedString(
+    "@checklistItemDetail",
+    bundle: .module, comment: "AChecklistItemEditView 中默认的详情文字")
+
   /// 启用 MutualExclusion 后，同一 Checklist 内相邻 Section 将互斥，仅允许选择其中一组
   public static let mutualExclusionExplanation = NSLocalizedString(
     "@mutualExclusionExplanation",
