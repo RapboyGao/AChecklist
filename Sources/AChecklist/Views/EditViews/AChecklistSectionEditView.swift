@@ -4,6 +4,7 @@ import SwiftUI
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistSectionEditView: View {
     @Binding var section: AChecklistSection
+    var onDelete: (UUID) -> Void
 
     public var body: some View {
         Section {
@@ -30,6 +31,15 @@ public struct AChecklistSectionEditView: View {
             AChecklistItemCreateButton { newItem in
                 section.items.append(newItem)
             }
+            Button(role: .destructive) {
+                onDelete(section.id)
+            } label: {
+                Label(
+                    SwiftI18n.delete.description,
+                    systemImage: SwiftI18n.delete.defaultSystemImage
+                )
+                .foregroundColor(.red)
+            }
         } footer: {
             Text(I18n.mutualExclusionExplanation)
         }
@@ -49,7 +59,9 @@ private struct ExampleView: View {
     @State var section: AChecklistSection = AChecklist.example.sections[0]
 
     public var body: some View {
-        AChecklistSectionEditView(section: $section)
+        AChecklistSectionEditView(section: $section) { id in
+            ()
+        }
     }
 }
 
@@ -59,6 +71,5 @@ struct AChecklistSectionEditView_Previews: PreviewProvider {
         List {
             ExampleView()
         }
-
     }
 }
