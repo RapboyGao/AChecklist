@@ -107,8 +107,6 @@ public struct AChecklistSectionEditView: View {
       } message: {
         Text(I18n.confirmDeleteSection)
       }
-    } footer: {
-      Text(I18n.mutualExclusionExplanation)
     }
   }
 
