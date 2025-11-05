@@ -6,6 +6,22 @@ import SwiftUI
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
     public struct AChecklistItemEditContent: View {
         @Binding var item: AChecklistItem
+        
+        // 定义可聚焦的字段枚举
+        private enum FocusField: Hashable {
+            case title
+            case detail
+            case seconds
+            case minutes
+            case hours
+            case days
+            case month
+            case year
+        }
+        
+        // 焦点状态
+        @FocusState private var focusedField: FocusField?
+        
 
         @ViewBuilder
         private var secondsHStack: some View {
@@ -13,11 +29,17 @@ import SwiftUI
                 TextField(
                     I18n.seconds,
                     value: $item.expiresAfter.second,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.seconds)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .seconds)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusedField = .minutes
+                }
                 switch item.expiresAfter.second {
                 case 0:
                     Text(I18n.second)
@@ -33,11 +55,17 @@ import SwiftUI
                 TextField(
                     I18n.minutes,
                     value: $item.expiresAfter.minute,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.minutes)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .minutes)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusedField = .hours
+                }
                 switch item.expiresAfter.minute {
                 case 0:
                     Text(I18n.minute)
@@ -53,11 +81,17 @@ import SwiftUI
                 TextField(
                     I18n.hours,
                     value: $item.expiresAfter.hour,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.hours)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .hours)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusedField = .days
+                }
                 switch item.expiresAfter.hour {
                 case 0:
                     Text(I18n.hour)
@@ -73,11 +107,17 @@ import SwiftUI
                 TextField(
                     I18n.days,
                     value: $item.expiresAfter.day,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.days)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .days)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusedField = .month
+                }
                 switch item.expiresAfter.day {
                 case 0:
                     Text(I18n.day)
@@ -93,11 +133,17 @@ import SwiftUI
                 TextField(
                     I18n.months,
                     value: $item.expiresAfter.month,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.months)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .month)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusedField = .year
+                }
                 switch item.expiresAfter.month {
                 case 0:
                     Text(I18n.month)
@@ -113,11 +159,17 @@ import SwiftUI
                 TextField(
                     I18n.years,
                     value: $item.expiresAfter.year,
-                    format: .number
+                    format: .number,
+                    prompt: Text(I18n.years)
                 )
                 #if !os(macOS)
                     .keyboardType(.numberPad)
                 #endif
+                .focused($focusedField, equals: .year)
+                .submitLabel(.done)
+                .onSubmit {
+                    focusedField = nil
+                }
                 switch item.expiresAfter.year {
                 case 0:
                     Text(I18n.year)
@@ -133,9 +185,15 @@ import SwiftUI
                     // 最多25个字符
                     TextField(
                         SwiftI18n.title.description,
-                        text: $item.title
+                        text: $item.title,
+                        prompt: Text(SwiftI18n.title.description)
                     )
                     .padding(.vertical)
+                    .focused($focusedField, equals: .title)
+                    .submitLabel(.next)
+                    .onSubmit {
+                        focusedField = .detail
+                    }
                     .onChange(of: item.title) { newValue in
                         if newValue.count > 25 {
                             item.title = String(newValue.prefix(25))
@@ -144,6 +202,10 @@ import SwiftUI
                     // 最多200个字符
                     TextEditor(text: $item.detail)
                         .frame(minHeight: 100)
+                        .focused($focusedField, equals: .detail)
+                        .onSubmit {
+                            focusedField = .seconds
+                        }
                         .onChange(of: item.detail) { newValue in
                             if newValue.count > 200 {
                                 item.detail = String(newValue.prefix(200))
@@ -162,6 +224,12 @@ import SwiftUI
 
             }
             .navigationTitle(item.title)
+            .onAppear {
+                // 初始时可以自动聚焦到第一个字段
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    focusedField = .title
+                }
+            }
 
         }
 
