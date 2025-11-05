@@ -18,15 +18,16 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
       .max()
   }
 
-  public func hasExpiration(now: Date = Date()) -> Bool {
+  public func numberOfExpiredItems(now: Date = Date()) -> Int {
+    var count = 0
     for section in sections {
       for item in section.items {
         if item.isExpired(now: now) {
-          return true
+          count += 1
         }
       }
     }
-    return false
+    return count
   }
 
   mutating func removeSection(id: UUID) {
