@@ -1,6 +1,21 @@
 /* AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 */
 "@mutualExclusion" = "相互排他";
 
+/* 用于展示mutual Exclusion和默认分区的区别的AChecklist的标题 */
+"@mutualExclusionExplanationExampleChecklistName" = "相互排他セクションの例";
+
+/* AChecklistSection 中未启用 MutualExclusion 时的默认示例分区标题1 */
+"@defaultSectionExampleName1" = "デフォルトセクション1";
+
+/* AChecklistSection 中未启用 MutualExclusion 时的默认示例分区标题2 */
+"@defaultSectionExampleName2" = "デフォルトセクション2";
+
+/* AChecklistSection 中 MutualExclusion 为true示例分区1标题 */
+"@mutualExclusionExampleSectionName1" = "相互排他セクション1";
+
+/* AChecklistSection 中 MutualExclusion 为true示例分区2标题 */
+"@mutualExclusionExampleSectionName2" = "相互排他セクション2";
+
 /* AChecklistItemEditView 的标题 */
 "@checklistItem" = "チェックリスト項目";
 
