@@ -10,6 +10,25 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
   public var name: String
   public var sections: [AChecklistSection]
 
+  public var lastOpened: Date? {
+    return
+      sections
+      .flatMap { $0.items }
+      .compactMap { $0.currentDate }
+      .max()
+  }
+
+  public func hasExpiration(now: Date = Date()) -> Bool {
+    for section in sections {
+      for item in section.items {
+        if item.isExpired(now: now) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   mutating func removeSection(id: UUID) {
     sections.removeAll { section in
       section.id == id
