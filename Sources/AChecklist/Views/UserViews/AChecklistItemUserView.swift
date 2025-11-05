@@ -84,7 +84,13 @@ public struct AChecklistItemUserView: View {
       .padding(itemStyle.padding)
       .background(
         RoundedRectangle(cornerRadius: itemStyle.cornerRadius)
-          .fill(.regularMaterial)
+          #if os(watchOS)
+            .fill(.gray)
+            .fill(.regularMaterial)
+          #else
+            .fill(.regularMaterial)
+          #endif
+
           .shadow(radius: 1)
       )
       #if os(macOS)

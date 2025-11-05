@@ -13,18 +13,9 @@ public struct AChecklistCardView: View {
 
   private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
-  // 计算统计信息
-  private var totalItems: Int {
-    checklist.sections.reduce(0) { $0 + $1.items.count }
-  }
-
-  private var checkedItems: Int {
-    checklist.sections.reduce(0) { $0 + $1.checkedCount }
-  }
-
   private var progress: Double {
-    guard totalItems > 0 else { return 0 }
-    return Double(checkedItems) / Double(totalItems)
+    guard checklist.totalItems > 0 else { return 0 }
+    return Double(checklist.numberOfCheckedItems) / Double(checklist.totalItems)
   }
 
   private var hasExpiredItems: Bool {
@@ -60,10 +51,10 @@ public struct AChecklistCardView: View {
       }
     #elseif os(watchOS)
       EmptyView()
-      // watchOS使用更适合的背景色，避免使用thickMaterial导致的白边问题
-//      RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
-//        .fill(Color(.clear))
-//        .shadow(radius: 0)
+    // watchOS使用更适合的背景色，避免使用thickMaterial导致的白边问题
+    //      RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
+    //        .fill(Color(.clear))
+    //        .shadow(radius: 0)
     #else
       // 其他平台使用半透明背景
       RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
@@ -88,21 +79,16 @@ public struct AChecklistCardView: View {
       // 统计信息
       HStack(alignment: .center, spacing: cardStyle.padding) {
         // 项目数量统计
-        Text("\(checkedItems)/\(totalItems)")
+        Text("\(checklist.numberOfCheckedItems)/\(checklist.totalItems)")
       }
 
       Spacer()
 
       // 进度条
-      VStack(alignment: .leading, spacing: 4) {
-        Text("完成进度")
-          .font(cardStyle.subtitleFont)
-          .foregroundColor(.secondary)
-        ProgressView(value: progress)
-          .progressViewStyle(
-            LinearProgressViewStyle(tint: checklist.statusColor)
-          )
-      }
+      ProgressView(value: progress)
+        .progressViewStyle(
+          LinearProgressViewStyle(tint: checklist.statusColor)
+        )
 
       // 上次操作时间
       if let lastOpened = checklist.lastOpened {
@@ -125,6 +111,9 @@ public struct AChecklistCardView: View {
     .onReceive(timer) { _ in
       currentDate = Date()
     }
+    .onChange(of: checklist) { _ in
+      currentDate = Date(timeIntervalSinceNow: 1)
+    }
     // 交互效果
     #if os(macOS)
       .onHover { hover in
@@ -138,16 +127,6 @@ public struct AChecklistCardView: View {
         value: isHovered
       )
     #endif
-
-    // 视图出现时的动画
-    .onAppear {
-      withAnimation {
-        animatedProgress = progress
-      }
-    }
-    .onChange(of: checklist) { _ in
-      currentDate = Date(timeIntervalSinceNow: 1)
-    }
 
   }
 

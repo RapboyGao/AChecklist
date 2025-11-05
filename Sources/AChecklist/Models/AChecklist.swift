@@ -122,6 +122,68 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     }
   }
 
+  public var numberOfCheckedItems: Int {
+    sections.reduce(0) { $0 + $1.checkedCount }
+  }
+
+  /// 计算统计信息：总项目数（考虑互斥组的特殊处理）
+  public var totalItems: Int {
+    var result = 0
+
+    // 处理互斥section组
+    var groupedSections = [[AChecklistSection]]()
+    var currentGroup = [AChecklistSection]()
+
+    // 首先将sections分组，连续的互斥section归为一组
+    for section in sections {
+      if section.isMutualExclusion {
+        // 添加到当前互斥组
+        currentGroup.append(section)
+      }
+      else {
+        // 非互斥section，将之前的互斥组添加到分组列表
+        if !currentGroup.isEmpty {
+          groupedSections.append(currentGroup)
+          currentGroup = []
+        }
+        // 将非互斥section单独作为一组
+        groupedSections.append([section])
+      }
+    }
+
+    // 处理最后一个互斥组
+    if !currentGroup.isEmpty {
+      groupedSections.append(currentGroup)
+    }
+
+    // 遍历每个组计算总项目数
+    for group in groupedSections {
+      if group.count == 1 && !group[0].isMutualExclusion {
+        // 单个非互斥section，直接累加items数量
+        result += group[0].items.count
+      }
+      else {
+        // 互斥section组的处理
+        let activeSections = group.filter {
+          $0.status == .checked || $0.status == .partiallyChecked
+        }
+
+        if !activeSections.isEmpty {
+          // 规则1: 互斥组中如果有活跃section，计入第一个活跃section的items数量
+          result += activeSections[0].items.count
+        }
+        else {
+          // 规则2: 如果互斥组都是unchecked，计入items数最少的section
+          if let minItemsSection = group.min(by: { $0.items.count < $1.items.count }) {
+            result += minItemsSection.items.count
+          }
+        }
+      }
+    }
+
+    return result
+  }
+
   // 计算属性：状态颜色
   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
   public var statusColor: Color {
