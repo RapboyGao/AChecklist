@@ -28,7 +28,8 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         if section.isMutualExclusion {
           // 添加到当前互斥组
           currentGroup.append(section)
-        } else {
+        }
+        else {
           // 非互斥section，将之前的互斥组添加到分组列表
           if !currentGroup.isEmpty {
             groupedSections.append(currentGroup)
@@ -58,7 +59,8 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
           if sectionStatus != .unchecked {
             anyGroupStarted = true
           }
-        } else {
+        }
+        else {
           // 互斥section组
           let checkedCount = group.filter { $0.status == .checked }.count
           if checkedCount != 1 {
@@ -73,9 +75,11 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
       // 确定整体状态
       if allGroupsCompleted {
         return .checked
-      } else if anyGroupStarted {
+      }
+      else if anyGroupStarted {
         return .partiallyChecked
-      } else {
+      }
+      else {
         return .unchecked
       }
     }
@@ -149,7 +153,8 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         if s.id == section.id {
           continue
         }
-      } else if inMutualGroup {
+      }
+      else if inMutualGroup {
         // 遇到非互斥section，结束当前互斥组的收集
         break
       }
@@ -189,7 +194,8 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
         if currentSection.id != selectedSection.id {
           sections[index].status = .unchecked
         }
-      } else if isInTargetGroup {
+      }
+      else if isInTargetGroup {
         // 已经处理完整个互斥组
         break
       }
@@ -290,7 +296,10 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
       ),
       AChecklistSection(
         name: I18n.mutualExclusionExampleSectionName1,
-        items: [.init(title: I18n.mutualExclusion, detail: I18n.mutualExclusionExplanation), .createRandom().noDetail()]
+        items: [
+          .init(title: I18n.mutualExclusion, detail: I18n.mutualExclusionExplanation),
+          .createRandom().noDetail(),
+        ]
       )
       .mutating { $0.isMutualExclusion = true },
       AChecklistSection(
@@ -304,6 +313,17 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
       ),
     ]
   )
+
+  public init?(data: Data?) {
+    guard let data = data else {
+      return nil
+    }
+    let decoder = JSONDecoder()
+    guard let decoded = try? decoder.decode(AChecklist.self, from: data) else {
+      return nil
+    }
+    self = decoded
+  }
 }
 
 // 扩展用于在创建时直接修改属性
