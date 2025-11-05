@@ -58,13 +58,18 @@ public struct AChecklistCardView: View {
           .fill(Color(.windowBackgroundColor))
           .shadow(radius: 5, x: 0, y: 3)
       }
+    #elseif os(watchOS)
+      EmptyView()
+      // watchOS使用更适合的背景色，避免使用thickMaterial导致的白边问题
+//      RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
+//        .fill(Color(.clear))
+//        .shadow(radius: 0)
     #else
       // 其他平台使用半透明背景
       RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
         .fill(.thickMaterial)
         .shadow(radius: 5, x: 0, y: 3)
     #endif
-
   }
 
   @ViewBuilder
