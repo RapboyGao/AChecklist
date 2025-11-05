@@ -125,13 +125,11 @@ public struct AChecklistItemUserView: View {
               Text(item.detail)
                 .font(itemStyle.detailFont)
                 .foregroundColor(item.lastChecked != nil ? .secondary : .primary)
-                .lineLimit(2)
                 .opacity(item.lastChecked != nil ? 0.7 : 1.0)
             #else
               Text(item.detail)
                 .font(itemStyle.detailFont)
                 .foregroundColor(.secondary)
-                .lineLimit(2)
                 .opacity(item.lastChecked != nil ? 0.7 : 1.0)
             #endif
           }

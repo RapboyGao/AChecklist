@@ -8,6 +8,7 @@ public struct AChecklistSectionEditView: View {
 
   @State private var isDeleteConfirmPresented = false
   @State private var showMutualExclusionExplanation = false
+  @State private var mutualExclusionChecklist = AChecklist.mutualExclusionExplanation
 
   @ViewBuilder
   private var mutualExclusion: some View {
@@ -31,9 +32,7 @@ public struct AChecklistSectionEditView: View {
             showMutualExclusionExplanation = false
           }
         ) {
-          Text(I18n.mutualExclusionExplanation)
-            .font(.title2)
-            .padding()
+          AChecklistUserView(checklist: $mutualExclusionChecklist)
         }
 
         Spacer()
