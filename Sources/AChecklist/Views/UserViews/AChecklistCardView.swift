@@ -79,7 +79,8 @@ public struct AChecklistCardView: View {
       // 统计信息
       HStack(alignment: .center, spacing: cardStyle.padding) {
         // 项目数量统计
-        Text("\(checklist.numberOfCheckedItems)/\(checklist.totalItems)")
+        Text("\(checklist.numberOfCheckedItems) / \(checklist.totalItems)")
+          .foregroundColor(.accentColor)
       }
 
       Spacer()
@@ -94,7 +95,7 @@ public struct AChecklistCardView: View {
       if let lastOpened = checklist.lastOpened {
         Text(SwiftRelativeTime(lastOpened, now: currentDate).description)
           .font(cardStyle.subtitleFont)
-          .foregroundColor(.secondary)
+          .foregroundColor(checklist.hasExpiredItems(now: currentDate) ? .red : .secondary)
       }
     }
     .frame(minHeight: cardStyle.minHeight)

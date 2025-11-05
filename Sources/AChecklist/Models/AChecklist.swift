@@ -284,6 +284,13 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     }
   }
 
+  /// 检查是否有过期的项目
+  /// - Parameter now: 当前时间，默认当前时间
+  /// - Returns: 是否有过期项目
+  public func hasExpiredItems(now: Date = Date()) -> Bool {
+    return numberOfExpiredItems(now: now) > 0
+  }
+
   /// 示例检查单数据
   /// 包含5个正常组和3个连续的互斥组
   public static let example = AChecklist(
