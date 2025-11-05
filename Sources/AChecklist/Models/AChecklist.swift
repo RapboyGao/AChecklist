@@ -280,6 +280,30 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
       ),
     ]
   )
+
+  public static let mutualExclusionExplanation = AChecklist(
+    name: I18n.mutualExclusionExplanationExampleChecklistName,
+    sections: [
+      AChecklistSection(
+        name: I18n.defaultSectionExampleName1,
+        items: [.createRandom()]
+      ),
+      AChecklistSection(
+        name: I18n.mutualExclusionExampleSectionName1,
+        items: [.init(title: I18n.mutualExclusion, detail: I18n.mutualExclusionExplanation), .createRandom()]
+      )
+      .mutating { $0.isMutualExclusion = true },
+      AChecklistSection(
+        name: I18n.mutualExclusionExampleSectionName2,
+        items: [.createRandom(), .createRandom()]
+      )
+      .mutating { $0.isMutualExclusion = true },
+      AChecklistSection(
+        name: I18n.defaultSectionExampleName2,
+        items: [.createRandom()]
+      ),
+    ]
+  )
 }
 
 // 扩展用于在创建时直接修改属性

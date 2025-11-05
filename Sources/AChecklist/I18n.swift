@@ -5,9 +5,36 @@ enum I18n {
     "@mutualExclusion",
     bundle: .module, comment: "AChecklistSectionEditView 中 MutualExclusion 开关的标签文字")
 
+
+  public static let mutualExclusionExplanationExampleChecklistName = NSLocalizedString(
+    "@mutualExclusionExplanationExampleChecklistName",
+    bundle: .module, comment: "用于展示mutual Exclusion和默认分区的区别的AChecklist的标题，‘互斥分区示例’")
+
+  /// 未启用 MutualExclusion 时的默认示例分区标题1，‘默认分区1’
+  public static let defaultSectionExampleName1 = NSLocalizedString(
+    "@defaultSectionExampleName1",
+    bundle: .module, comment: "AChecklistSection 中未启用 MutualExclusion 时的默认示例分区标题1，‘默认分区1’")
+
+  /// 未启用 MutualExclusion 时的默认示例分区标题2，‘默认分区2’
+  public static let defaultSectionExampleName2 = NSLocalizedString(
+    "@defaultSectionExampleName2",
+    bundle: .module, comment: "AChecklistSection 中未启用 MutualExclusion 时的默认示例分区标题2，‘默认分区2’")
+  /// 启用 MutualExclusion 后，同一 Checklist 内相邻 Section 将互斥，仅允许选择其中一组
+  /// 互斥分区1，‘互斥分区1’
+  public static let mutualExclusionExampleSectionName1 = NSLocalizedString(
+    "@mutualExclusionExampleSectionName1",
+    bundle: .module, comment: "AChecklistSection 中 MutualExclusion 为true示例分区1标题，‘互斥分区1’")
+  /// 启用 MutualExclusion 后，同一 Checklist 内相邻 Section 将互斥，仅允许选择其中一组
+  /// 互斥分区2，‘互斥分区2’
+  public static let mutualExclusionExampleSectionName2 = NSLocalizedString(
+    "@mutualExclusionExampleSectionName2",
+    bundle: .module, comment: "AChecklistSection 中 MutualExclusion 为true示例分区2标题，‘互斥分区2’")
+
+ 
+
   public static let checklistItem = NSLocalizedString(
     "@checklistItem",
-    bundle: .module, comment: "AChecklistItemEditView 的标题")
+    bundle: .module, comment: "AChecklistItemEditView 的标题，‘检查项’")
 
   public static let checklistItemDetail = NSLocalizedString(
     "@checklistItemDetail",
