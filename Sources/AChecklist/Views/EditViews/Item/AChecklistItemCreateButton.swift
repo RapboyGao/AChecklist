@@ -35,16 +35,8 @@ public struct AChecklistItemCreateButton: View {
                 isSheetPresented = true
             }
             .sheet(isPresented: $isSheetPresented) {
-                if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 10.0, *)
-                {
-                    NavigationStack {
-                        sheetContent
-                    }
-                } else {
-                    NavigationView {
-                        sheetContent
-                        sheetContent
-                    }
+                CompatibilityNavigationView {
+                    sheetContent
                 }
             }
             .onChange(of: isSheetPresented) { newValue in
