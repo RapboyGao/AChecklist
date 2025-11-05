@@ -8,7 +8,6 @@ public struct AChecklistItemEditView: View {
   #if !os(watchOS)
     @ViewBuilder
     var listContent: some View {
-
       AChecklistItemEditContent($item)
         #if !os(macOS)
           .toolbar {
@@ -19,7 +18,6 @@ public struct AChecklistItemEditView: View {
             }
           }
         #endif
-
     }
   #endif
 
@@ -27,7 +25,6 @@ public struct AChecklistItemEditView: View {
     #if os(watchOS)
       // 如果是watch 则只有一个简单的Textfield界面
       TextField(SwiftI18n.title.description, text: $item.title)
-
     #else
       Button {
         isShown.toggle()

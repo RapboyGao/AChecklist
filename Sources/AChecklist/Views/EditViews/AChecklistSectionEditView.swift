@@ -33,15 +33,15 @@ public struct AChecklistSectionEditView: View {
           }
         ) {
           CompatibilityNavigationView {
-            AChecklistUserView(checklist: $mutualExclusionChecklist)
-            .toolbar {
+            AChecklistUserView($mutualExclusionChecklist)
+              .toolbar {
                 ToolbarItem {
-                    SwiftI18n.close.button {
-                      showMutualExclusionExplanation = false
-                    }
+                  SwiftI18n.close.button {
+                    showMutualExclusionExplanation = false
+                  }
                 }
-              
-            }
+
+              }
           }
         }
 

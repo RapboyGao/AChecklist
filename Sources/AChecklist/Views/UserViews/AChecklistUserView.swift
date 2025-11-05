@@ -170,6 +170,10 @@ public struct AChecklistUserView: View {
       #endif
     }
   }
+
+  public init(_ checklist: Binding<AChecklist>) {
+    self._checklist = checklist
+  }
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
@@ -177,7 +181,7 @@ private struct Example: View {
   @State var checklist: AChecklist = .example
 
   var body: some View {
-    AChecklistUserView(checklist: $checklist)
+    AChecklistUserView($checklist)
   }
 }
 
