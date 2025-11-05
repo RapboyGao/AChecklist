@@ -14,7 +14,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     return
       sections
       .flatMap { $0.items }
-      .compactMap { $0.currentDate }
+      .compactMap { $0.lastChecked }
       .max()
   }
 

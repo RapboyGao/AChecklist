@@ -3,62 +3,10 @@ import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 public struct AChecklistItemUserView: View {
-  // 根据不同操作系统提供不同的样式配置
-  private var itemStyle: ItemStyle {
-    #if os(iOS)
-      return ItemStyle(
-        cornerRadius: 12,
-        padding: 16,
-        titleFont: .headline,
-        detailFont: .subheadline,
-        checkboxSize: 24
-      )
-    #elseif os(macOS)
-      return ItemStyle(
-        cornerRadius: 8,
-        padding: 12,
-        titleFont: .system(size: 14, weight: .medium),
-        detailFont: .system(size: 12),
-        checkboxSize: 20
-      )
-    #elseif os(tvOS)
-      return ItemStyle(
-        cornerRadius: 16,
-        padding: 20,
-        titleFont: .system(size: 20, weight: .medium),
-        detailFont: .system(size: 16),
-        checkboxSize: 32
-      )
-    #elseif os(watchOS)
-      return ItemStyle(
-        cornerRadius: 8,
-        padding: 10,
-        titleFont: .body,
-        detailFont: .caption,
-        checkboxSize: 18
-      )
-    #else
-      // 默认样式
-      return ItemStyle(
-        cornerRadius: 10,
-        padding: 14,
-        titleFont: .headline,
-        detailFont: .subheadline,
-        checkboxSize: 22
-      )
-    #endif
-  }
-
-  private struct ItemStyle {
-    let cornerRadius: CGFloat
-    let padding: CGFloat
-    let titleFont: Font
-    let detailFont: Font
-    let checkboxSize: CGFloat
-  }
-
   @Binding var item: AChecklistItem
   @State private var isAnimating = false
+
+  private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
   // 使用系统自带的相对时间格式化器
   private let relativeFormatter: RelativeDateTimeFormatter = {
@@ -67,8 +15,6 @@ public struct AChecklistItemUserView: View {
     formatter.unitsStyle = .short
     return formatter
   }()
-
-  private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()  // 降低刷新频率到每分钟
 
   public var body: some View {
     Button {
@@ -156,6 +102,63 @@ public struct AChecklistItemUserView: View {
     .onReceive(timer) { _ in
       item.currentDate = Date()
     }
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
+extension AChecklistItemUserView {
+  // 根据不同操作系统提供不同的样式配置
+  private var itemStyle: ItemStyle {
+    #if os(iOS)
+      return ItemStyle(
+        cornerRadius: 12,
+        padding: 16,
+        titleFont: .headline,
+        detailFont: .subheadline,
+        checkboxSize: 24
+      )
+    #elseif os(macOS)
+      return ItemStyle(
+        cornerRadius: 8,
+        padding: 12,
+        titleFont: .system(size: 14, weight: .medium),
+        detailFont: .system(size: 12),
+        checkboxSize: 20
+      )
+    #elseif os(tvOS)
+      return ItemStyle(
+        cornerRadius: 16,
+        padding: 20,
+        titleFont: .system(size: 20, weight: .medium),
+        detailFont: .system(size: 16),
+        checkboxSize: 32
+      )
+    #elseif os(watchOS)
+      return ItemStyle(
+        cornerRadius: 8,
+        padding: 10,
+        titleFont: .body,
+        detailFont: .caption,
+        checkboxSize: 18
+      )
+    #else
+      // 默认样式
+      return ItemStyle(
+        cornerRadius: 10,
+        padding: 14,
+        titleFont: .headline,
+        detailFont: .subheadline,
+        checkboxSize: 22
+      )
+    #endif
+  }
+
+  private struct ItemStyle {
+    let cornerRadius: CGFloat
+    let padding: CGFloat
+    let titleFont: Font
+    let detailFont: Font
+    let checkboxSize: CGFloat
   }
 }
 
