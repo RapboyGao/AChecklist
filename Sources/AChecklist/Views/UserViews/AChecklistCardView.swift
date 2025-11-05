@@ -50,11 +50,11 @@ public struct AChecklistCardView: View {
           .shadow(radius: 5, x: 0, y: 3)
       }
     #elseif os(watchOS)
-      EmptyView()
-    // watchOS使用更适合的背景色，避免使用thickMaterial导致的白边问题
-    //      RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
-    //        .fill(Color(.clear))
-    //        .shadow(radius: 0)
+      // watchOS使用更适合的背景色，避免使用thickMaterial导致的白边问题
+      RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
+        .fill(.gray)
+        .fill(.thickMaterial)
+        .shadow(radius: 0)
     #else
       // 其他平台使用半透明背景
       RoundedRectangle(cornerRadius: cardStyle.cornerRadius)
@@ -103,31 +103,30 @@ public struct AChecklistCardView: View {
 
   public var body: some View {
     // 卡片容器
-    ZStack {
-      backgroundRectangle
-      cardContent
-    }
-    .frame(maxWidth: cardStyle.maxWidth)
-    .onReceive(timer) { _ in
-      currentDate = Date()
-    }
-    .onChange(of: checklist) { _ in
-      currentDate = Date(timeIntervalSinceNow: 1)
-    }
-    // 交互效果
-    #if os(macOS)
-      .onHover { hover in
-        withAnimation {
-          isHovered = hover
-        }
+    cardContent
+      .background {
+        backgroundRectangle
       }
-      .scaleEffect(isHovered ? 1.02 : 1.0)
-      .animation(
-        .spring(response: 0.3, dampingFraction: 0.7),
-        value: isHovered
-      )
-    #endif
-
+      .frame(maxWidth: cardStyle.maxWidth)
+      .onReceive(timer) { _ in
+        currentDate = Date()
+      }
+      .onChange(of: checklist) { _ in
+        currentDate = Date(timeIntervalSinceNow: 1)
+      }
+      // 交互效果
+      #if os(macOS)
+        .onHover { hover in
+          withAnimation {
+            isHovered = hover
+          }
+        }
+        .scaleEffect(isHovered ? 1.02 : 1.0)
+        .animation(
+          .spring(response: 0.3, dampingFraction: 0.7),
+          value: isHovered
+        )
+      #endif
   }
 
   public init(_ checklist: AChecklist) {
@@ -220,6 +219,7 @@ private struct AChecklistCardViewExample: View {
     } label: {
       AChecklistCardView(checklist)
     }
+    .buttonStyle(.plain)
     .padding()
   }
 }
@@ -227,7 +227,6 @@ private struct AChecklistCardViewExample: View {
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 struct AChecklistCardView_Previews: PreviewProvider {
   static var previews: some View {
-    AChecklistCardViewExample()
     CompatibilityNavigationView {
       ScrollView {
         LazyVStack {
