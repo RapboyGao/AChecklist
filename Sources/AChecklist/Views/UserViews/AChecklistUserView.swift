@@ -82,12 +82,19 @@ public struct AChecklistUserView: View {
     // 主要内容滚动视图
     ScrollViewReader { scrollViewReader in
       ScrollView(showsIndicators: true) {
-        VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
+        VStack(
+          alignment: .leading, spacing: checklistStyle.sectionSpacing
+        ) {
           // 区域列表
-          VStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
+          VStack(
+            alignment: .leading,
+            spacing: checklistStyle.sectionSpacing
+          ) {
             ForEach($checklist.sections) { $section in
               AChecklistSectionUserView(
-                section: $section, checkMutualExclusion: checklist.checkMutualExclusion
+                section: $section,
+                checkMutualExclusion: checklist
+                  .checkMutualExclusion
               )
               .id(section.id)
               .opacity(isViewAppearing ? 0 : 1.0)
@@ -95,14 +102,26 @@ public struct AChecklistUserView: View {
               .animation(
                 .spring(response: 0.5, dampingFraction: 0.7)
                   .delay(
-                    0.2 + Double(checklist.sections.firstIndex(where: { $0.id == section.id }) ?? 0)
+                    0.2 + Double(
+                      checklist.sections.firstIndex(
+                        where: { $0.id == section.id })
+                        ?? 0)
                       * 0.1),
                 value: isViewAppearing
               )
-              .onChange(of: section.status) { _ in
-                // 当section状态改变时，处理互斥逻辑
-                checklist.handleMutualExclusionSelection(for: section)
-              }
+              #if os(visionOS)
+                .onChange(of: section.status) { _, _ in
+                  // 当section状态改变时，处理互斥逻辑
+                  checklist.handleMutualExclusionSelection(
+                    for: section)
+                }
+              #else
+                .onChange(of: section.status) { _ in
+                  // 当section状态改变时，处理互斥逻辑
+                  checklist.handleMutualExclusionSelection(
+                    for: section)
+                }
+              #endif
             }
           }
 
@@ -110,9 +129,12 @@ public struct AChecklistUserView: View {
 
           Button(action: {
             // 添加转动动画
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            withAnimation(
+              .spring(response: 0.5, dampingFraction: 0.7)
+            ) {
               rotationAngle += 360
-              scrollViewReader.scrollTo(checklist.sections.first?.id)
+              scrollViewReader.scrollTo(
+                checklist.sections.first?.id)
             }
 
             // 重置所有section的状态
@@ -141,7 +163,7 @@ public struct AChecklistUserView: View {
           }
         }
       }
-      #if os(iOS) || os(tvOS) || os(watchOS)
+      #if os(iOS) || os(watchOS)
         .navigationBarTitleDisplayMode(.large)
       #elseif os(macOS)
         .frame(minWidth: 400, minHeight: 400)  // macOS 最小窗口尺寸
@@ -162,7 +184,7 @@ private struct Example: View {
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
 struct AChecklistView_Previews: PreviewProvider {
   static var previews: some View {
-    NavigationView {
+    CompatibilityNavigationView {
       Example()
     }
   }

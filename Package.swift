@@ -13,11 +13,11 @@ let package = Package(
       targets: ["AChecklist"]
     )
   ],
-  // https://github.com/RapboyGao/SwiftRelativeTime.git
-  // https://github.com/RapboyGao/SwiftI18n.git
   dependencies: [
+    // https://github.com/RapboyGao/SwiftRelativeTime.git
     .package(url: "https://github.com/RapboyGao/SwiftRelativeTime.git", from: "1.0.0"),
-    .package(url: "https://github.com/RapboyGao/SwiftI18n.git", branch: "main"),
+    // https://github.com/RapboyGao/SwiftI18n.git
+    .package(url: "https://github.com/RapboyGao/SwiftI18n.git", from: "1.0.0"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.

@@ -3,8 +3,7 @@ import Foundation
 enum I18n {
   public static let mutualExclusion = NSLocalizedString(
     "@mutualExclusion",
-    bundle: .module, comment: "AChecklistSectionEditView 中 MutualExclusion 开关的标签文字")
-
+    bundle: .module, comment: "AChecklistSectionEditView 中 MutualExclusion 开关的标签文字 '互斥组'")
 
   public static let mutualExclusionExplanationExampleChecklistName = NSLocalizedString(
     "@mutualExclusionExplanationExampleChecklistName",
@@ -29,8 +28,6 @@ enum I18n {
   public static let mutualExclusionExampleSectionName2 = NSLocalizedString(
     "@mutualExclusionExampleSectionName2",
     bundle: .module, comment: "AChecklistSection 中 MutualExclusion 为true示例分区2标题，‘互斥分区2’")
-
- 
 
   public static let checklistItem = NSLocalizedString(
     "@checklistItem",
