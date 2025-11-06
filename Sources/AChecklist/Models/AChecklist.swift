@@ -3,6 +3,7 @@
 import CoreTransferable
 import CryptoKit
 import Foundation
+import SwiftI18n
 import SwiftUI
 
 public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
@@ -377,7 +378,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
   )
 
   public static let mutualExclusionExplanation = AChecklist(
-    name: I18n.mutualExclusionExplanationExampleChecklistName,
+    name: "Example",
     sections: [
       AChecklistSection(
         name: I18n.defaultSectionExampleName1,

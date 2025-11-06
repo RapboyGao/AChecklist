@@ -18,10 +18,6 @@ public struct AChecklistCardView: View {
     return Double(checklist.numberOfCheckedItems) / Double(checklist.totalItems)
   }
 
-  private var hasExpiredItems: Bool {
-    checklist.numberOfExpiredItems() > 0
-  }
-
   @ViewBuilder
   private var backgroundRectangle: some View {
     #if os(iOS)
@@ -95,7 +91,7 @@ public struct AChecklistCardView: View {
       if let lastOpened = checklist.lastOpened {
         Text(SwiftRelativeTime(lastOpened, now: currentDate).description)
           .font(cardStyle.subtitleFont)
-          .foregroundColor(checklist.hasExpiredItems(now: currentDate) ? .red : .secondary)
+          .foregroundColor(.secondary)
       }
     }
     .frame(minHeight: cardStyle.minHeight)

@@ -10,6 +10,21 @@ public struct AChecklistSectionEditView: View {
   @State private var showMutualExclusionExplanation = false
   @State private var mutualExclusionChecklist = AChecklist.mutualExclusionExplanation
 
+  private var sheetContent: some View {
+    CompatibilityNavigationViewWithToolbar {
+      AChecklistUserView($mutualExclusionChecklist)
+    } toolbarContent: {
+      SwiftI18n.close.button {
+        showMutualExclusionExplanation = false
+      }
+    }
+
+  }
+
+  private func dismiss() {
+    showMutualExclusionExplanation = false
+  }
+
   @ViewBuilder
   private var mutualExclusion: some View {
     #if os(watchOS)
@@ -26,25 +41,9 @@ public struct AChecklistSectionEditView: View {
         .onTapGesture {
           showMutualExclusionExplanation = true
         }
-        .sheet(
-          isPresented: $showMutualExclusionExplanation,
-          onDismiss: {
-            showMutualExclusionExplanation = false
-          }
-        ) {
-          CompatibilityNavigationView {
-            AChecklistUserView($mutualExclusionChecklist)
-              .toolbar {
-                ToolbarItem {
-                  SwiftI18n.close.button {
-                    showMutualExclusionExplanation = false
-                  }
-                }
-
-              }
-          }
+        .sheet(isPresented: $showMutualExclusionExplanation, onDismiss: dismiss) {
+          sheetContent
         }
-
         Spacer()
         Toggle(
           I18n.mutualExclusion,

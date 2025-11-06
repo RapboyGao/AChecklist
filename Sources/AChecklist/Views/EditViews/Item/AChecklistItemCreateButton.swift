@@ -11,18 +11,15 @@ public struct AChecklistItemCreateButton: View {
   #if !os(watchOS)
     @ViewBuilder
     private var sheetContent: some View {
-      AChecklistItemEditContent($item)
-        #if !os(macOS)
-          .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-              Button {
-                isSheetPresented = false
-              } label: {
-                Text(SwiftI18n.done.description)
-              }
-            }
-          }
-        #endif
+      CompatibilityNavigationViewWithToolbar {
+        AChecklistItemEditContent($item)
+      } toolbarContent: {
+        Button {
+          isSheetPresented = false
+        } label: {
+          Text(SwiftI18n.done.description)
+        }
+      }
     }
   #endif
 
@@ -35,9 +32,7 @@ public struct AChecklistItemCreateButton: View {
         isSheetPresented = true
       }
       .sheet(isPresented: $isSheetPresented) {
-        CompatibilityNavigationView {
-          sheetContent
-        }
+        sheetContent
       }
       .onChange(of: isSheetPresented) { newValue, _ in
         if !newValue {
@@ -50,9 +45,7 @@ public struct AChecklistItemCreateButton: View {
         isSheetPresented = true
       }
       .sheet(isPresented: $isSheetPresented) {
-        CompatibilityNavigationView {
-          sheetContent
-        }
+        sheetContent
       }
       .onChange(of: isSheetPresented) { newValue in
         if !newValue {

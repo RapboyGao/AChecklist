@@ -36,16 +36,12 @@ private struct ExampleView: View {
   @State var checklist: AChecklist = AChecklist.example
 
   public var body: some View {
-    CompatibilityNavigationView {
+    CompatibilityNavigationViewWithToolbar {
       AChecklistEditView(checklist: $checklist)
-        #if os(iOS)
-          .toolbar {
-            ToolbarItemGroup {
-              EditButton()
-            }
-          }
-        #endif
-
+    } toolbarContent: {
+      #if !os(watchOS)
+        EditButton()
+      #endif
     }
   }
 }

@@ -7,17 +7,14 @@ public struct AChecklistItemEditView: View {
   @State private var isShown = false
   #if !os(watchOS)
     @ViewBuilder
-    var listContent: some View {
-      AChecklistItemEditContent($item)
-        #if !os(macOS)
-          .toolbar {
-            ToolbarItemGroup {
-              Button(SwiftI18n.done.description) {
-                isShown.toggle()
-              }
-            }
-          }
-        #endif
+    var sheetContent: some View {
+      CompatibilityNavigationViewWithToolbar {
+        AChecklistItemEditContent($item)
+      } toolbarContent: {
+        Button(SwiftI18n.done.description) {
+          isShown.toggle()
+        }
+      }
     }
   #endif
 
@@ -34,9 +31,7 @@ public struct AChecklistItemEditView: View {
         )
       }
       .sheet(isPresented: $isShown) {
-        CompatibilityNavigationView {
-          listContent
-        }
+        sheetContent
       }
     #endif
 
