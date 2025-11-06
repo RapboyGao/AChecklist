@@ -65,6 +65,7 @@ public struct AChecklistCardView: View {
     VStack(alignment: .leading, spacing: cardStyle.padding / 2) {
       // 标题和状态
       HStack(alignment: .center) {
+        //        Image(systemName: "checklist")
         Text(checklist.name)
           .font(cardStyle.titleFont)
           .fontWeight(.semibold)
@@ -73,26 +74,38 @@ public struct AChecklistCardView: View {
       }
 
       // 统计信息
-      HStack(alignment: .center, spacing: cardStyle.padding) {
-        // 项目数量统计
-        Text("\(checklist.numberOfCheckedItems) / \(checklist.totalItems)")
-          .foregroundColor(.accentColor)
+      // 项目数量统计
+      Label {
+        Text("\(checklist.numberOfCheckedItems)/\(checklist.totalItems)")
+      } icon: {
+        Image(systemName: checklist.status == .checked ? "checklist.checked" : "checklist")
       }
+      .foregroundColor(checklist.status == .checked ? .green : .blue)
 
       Spacer()
 
       // 进度条
-      ProgressView(value: progress)
-        .progressViewStyle(
-          LinearProgressViewStyle(tint: checklist.statusColor)
-        )
-
-      // 上次操作时间
-      if let lastOpened = checklist.lastOpened {
-        Text(SwiftRelativeTime(lastOpened, now: currentDate).description)
-          .font(cardStyle.subtitleFont)
-          .foregroundColor(.secondary)
+      ProgressView(value: progress) {
+        // 过期项目
+        let numberOfExpiration = checklist.numberOfExpiredItems(now: currentDate)
+        if numberOfExpiration != 0 {
+          Label {
+            Text(numberOfExpiration, format: .number)
+          } icon: {
+            Image(systemName: "clock.badge.exclamationmark")
+          }
+          .foregroundColor(.gray)
+        }
+        // 上次操作时间
+        if let lastOpened = checklist.lastCheckedTime {
+          Text(SwiftRelativeTime(lastOpened, now: currentDate).description)
+            .font(cardStyle.subtitleFont)
+            .foregroundColor(.secondary)
+        }
       }
+      .progressViewStyle(
+        LinearProgressViewStyle(tint: checklist.statusColor)
+      )
     }
     .frame(minHeight: cardStyle.minHeight)
     .padding(cardStyle.padding)

@@ -11,7 +11,7 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
   public var name: String
   public var sections: [AChecklistSection]
 
-  public var lastOpened: Date? {
+  public var lastCheckedTime: Date? {
     return
       sections
       .flatMap { $0.items }
