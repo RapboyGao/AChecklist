@@ -391,7 +391,10 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
           .createRandom().noDetail(),
         ]
       )
-      .mutating { $0.isMutualExclusion = true },
+      .mutating {
+        $0.isMutualExclusion = true
+        $0.toggle()
+      },
       AChecklistSection(
         name: I18n.mutualExclusionExampleSectionName2,
         items: [.createRandom().noDetail(), .createRandom().noDetail()]
