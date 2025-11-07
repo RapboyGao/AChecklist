@@ -1,9 +1,9 @@
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-public struct AChecklistUserView<BottomView: View>: View {
+public struct AChecklistUserView<EditView: View>: View {
   @Binding var checklist: AChecklist
-  private var bottomView: BottomView
+  private var editView: EditView
   @State private var isViewAppearing = true
   @State private var rotationAngle: Double = 0
 
@@ -11,19 +11,12 @@ public struct AChecklistUserView<BottomView: View>: View {
     // 主要内容滚动视图
     ScrollViewReader { scrollViewReader in
       ScrollView(showsIndicators: true) {
-        VStack(
-          alignment: .leading, spacing: checklistStyle.sectionSpacing
-        ) {
+        LazyVStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
           // 区域列表
-          VStack(
-            alignment: .leading,
-            spacing: checklistStyle.sectionSpacing
-          ) {
+          LazyVStack(alignment: .leading, spacing: checklistStyle.sectionSpacing) {
             ForEach($checklist.sections) { $section in
               AChecklistSectionUserView(
-                section: $section,
-                checkMutualExclusion: checklist
-                  .checkMutualExclusion
+                section: $section, checkMutualExclusion: checklist.checkMutualExclusion
               )
               .id(section.id)
               .opacity(isViewAppearing ? 0 : 1.0)
@@ -65,7 +58,6 @@ public struct AChecklistUserView<BottomView: View>: View {
               scrollViewReader.scrollTo(
                 checklist.sections.first?.id)
             }
-
             // 重置所有section的状态
             checklist.resetAllSections()
           }) {
@@ -82,7 +74,7 @@ public struct AChecklistUserView<BottomView: View>: View {
           .transition(.scale)
           .disabled(checklist.status == .unchecked)
           // 底部视图
-          bottomView
+          editView
         }
       }
       .navigationTitle(checklist.name)
@@ -102,14 +94,14 @@ public struct AChecklistUserView<BottomView: View>: View {
     }
   }
 
-  public init(_ checklist: Binding<AChecklist>, @ViewBuilder bottomView: () -> BottomView) {
+  public init(_ checklist: Binding<AChecklist>, @ViewBuilder editView: () -> EditView) {
     self._checklist = checklist
-    self.bottomView = bottomView()
+    self.editView = editView()
   }
 
-  public init(_ checklist: Binding<AChecklist>) where BottomView == EmptyView {
+  public init(_ checklist: Binding<AChecklist>) where EditView == EmptyView {
     self._checklist = checklist
-    self.bottomView = EmptyView()
+    self.editView = EmptyView()
   }
 }
 

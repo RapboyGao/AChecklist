@@ -8,6 +8,9 @@ public struct AChecklistEditView: View {
   public var body: some View {
     ScrollViewReader { proxy in
       List {
+        Section {
+          TextField(SwiftI18n.name.description, text: $checklist.name)
+        }
         ForEach($checklist.sections) { $section in
           AChecklistSectionEditView(section: $section) { id in
             checklist.removeSection(id: id)
