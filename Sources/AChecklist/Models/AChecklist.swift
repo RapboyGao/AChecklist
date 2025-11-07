@@ -407,6 +407,17 @@ public struct AChecklist: Codable, Sendable, Hashable, Identifiable {
     ]
   )
 
+  public init(name: String = "Checklist-" + UUID().uuidString.prefix(5)) {
+    self.id = UUID()
+    self.name = name
+    self.sections = [
+      AChecklistSection(
+        name: I18n.defaultSectionExampleName1,
+        items: [.createRandom().noDetail()]
+      )
+    ]
+  }
+
   public init?(data: Data?) {
     guard let data = data else {
       return nil
