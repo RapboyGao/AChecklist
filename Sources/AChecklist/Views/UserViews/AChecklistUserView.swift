@@ -1,80 +1,9 @@
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
-public struct AChecklistUserView: View {
-  // 根据不同操作系统提供不同的样式配置
-  private var checklistStyle: ChecklistStyle {
-    #if os(iOS)
-      return ChecklistStyle(
-        cornerRadius: 16,
-        padding: 16,
-        titleFont: .largeTitle,
-        sectionSpacing: 20,
-        contentPadding: 16,
-        backgroundColor: .white,
-        secondaryColor: Color.gray.opacity(0.1),
-        sidebarWidth: 8
-      )
-    #elseif os(macOS)
-      return ChecklistStyle(
-        cornerRadius: 10,
-        padding: 20,
-        titleFont: .system(size: 28, weight: .bold),
-        sectionSpacing: 16,
-        contentPadding: 12,
-        backgroundColor: Color(.windowBackgroundColor),
-        secondaryColor: Color(.controlBackgroundColor),
-        sidebarWidth: 6
-      )
-    #elseif os(tvOS)
-      return ChecklistStyle(
-        cornerRadius: 20,
-        padding: 24,
-        titleFont: .system(size: 40, weight: .heavy),
-        sectionSpacing: 28,
-        contentPadding: 20,
-        backgroundColor: .black,
-        secondaryColor: Color.gray.opacity(0.2),
-        sidebarWidth: 10
-      )
-    #elseif os(watchOS)
-      return ChecklistStyle(
-        cornerRadius: 10,
-        padding: 12,
-        titleFont: .title,
-        sectionSpacing: 12,
-        contentPadding: 8,
-        backgroundColor: .black,
-        secondaryColor: Color.gray.opacity(0.1),
-        sidebarWidth: 6
-      )
-    #else
-      // 默认样式
-      return ChecklistStyle(
-        cornerRadius: 12,
-        padding: 16,
-        titleFont: .largeTitle,
-        sectionSpacing: 16,
-        contentPadding: 12,
-        backgroundColor: .white,
-        secondaryColor: Color.gray.opacity(0.1),
-        sidebarWidth: 8
-      )
-    #endif
-  }
-
-  private struct ChecklistStyle {
-    let cornerRadius: CGFloat
-    let padding: CGFloat
-    let titleFont: Font
-    let sectionSpacing: CGFloat
-    let contentPadding: CGFloat
-    let backgroundColor: Color
-    let secondaryColor: Color
-    let sidebarWidth: CGFloat
-  }
-
+public struct AChecklistUserView<BottomView: View>: View {
   @Binding var checklist: AChecklist
+  private var bottomView: BottomView
   @State private var isViewAppearing = true
   @State private var rotationAngle: Double = 0
 
@@ -152,6 +81,8 @@ public struct AChecklistUserView: View {
           .frame(maxWidth: .infinity, alignment: .center)
           .transition(.scale)
           .disabled(checklist.status == .unchecked)
+          // 底部视图
+          bottomView
         }
       }
       .navigationTitle(checklist.name)
@@ -171,9 +102,92 @@ public struct AChecklistUserView: View {
     }
   }
 
-  public init(_ checklist: Binding<AChecklist>) {
+  public init(_ checklist: Binding<AChecklist>, @ViewBuilder bottomView: () -> BottomView) {
     self._checklist = checklist
+    self.bottomView = bottomView()
   }
+
+  public init(_ checklist: Binding<AChecklist>) where BottomView == EmptyView {
+    self._checklist = checklist
+    self.bottomView = EmptyView()
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
+extension AChecklistUserView {
+
+  // 根据不同操作系统提供不同的样式配置
+  fileprivate var checklistStyle: ChecklistStyle {
+    #if os(iOS)
+      return ChecklistStyle(
+        cornerRadius: 16,
+        padding: 16,
+        titleFont: .largeTitle,
+        sectionSpacing: 20,
+        contentPadding: 16,
+        backgroundColor: .white,
+        secondaryColor: Color.gray.opacity(0.1),
+        sidebarWidth: 8
+      )
+    #elseif os(macOS)
+      return ChecklistStyle(
+        cornerRadius: 10,
+        padding: 20,
+        titleFont: .system(size: 28, weight: .bold),
+        sectionSpacing: 16,
+        contentPadding: 12,
+        backgroundColor: Color(.windowBackgroundColor),
+        secondaryColor: Color(.controlBackgroundColor),
+        sidebarWidth: 6
+      )
+    #elseif os(tvOS)
+      return ChecklistStyle(
+        cornerRadius: 20,
+        padding: 24,
+        titleFont: .system(size: 40, weight: .heavy),
+        sectionSpacing: 28,
+        contentPadding: 20,
+        backgroundColor: .black,
+        secondaryColor: Color.gray.opacity(0.2),
+        sidebarWidth: 10
+      )
+    #elseif os(watchOS)
+      return ChecklistStyle(
+        cornerRadius: 10,
+        padding: 12,
+        titleFont: .title,
+        sectionSpacing: 12,
+        contentPadding: 8,
+        backgroundColor: .black,
+        secondaryColor: Color.gray.opacity(0.1),
+        sidebarWidth: 6
+      )
+    #else
+      // 默认样式
+      return ChecklistStyle(
+        cornerRadius: 12,
+        padding: 16,
+        titleFont: .largeTitle,
+        sectionSpacing: 16,
+        contentPadding: 12,
+        backgroundColor: .white,
+        secondaryColor: Color.gray.opacity(0.1),
+        sidebarWidth: 8
+      )
+    #endif
+  }
+
+  fileprivate struct ChecklistStyle {
+    let cornerRadius: CGFloat
+    let padding: CGFloat
+    let titleFont: Font
+    let sectionSpacing: CGFloat
+    let contentPadding: CGFloat
+    let backgroundColor: Color
+    let secondaryColor: Color
+    let sidebarWidth: CGFloat
+  }
+
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 10.0, *)
